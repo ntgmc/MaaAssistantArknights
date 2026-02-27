@@ -220,7 +220,8 @@
     "EnterEpisodeNew": {
         "Doc": "base_task",
         "template": "empty.png",
-        "action": "ClickSelf"
+        "action": "ClickSelf",
+        "next": ["EnterEpisodeNew-Click"]
     },
     "00@EnterEpisodeNew": {},
     "01@EnterEpisodeNew": {},
@@ -239,60 +240,11 @@
     "14@EnterEpisodeNew": {},
     "15@EnterEpisodeNew": {},
     "16@EnterEpisodeNew": {},
-    "EnterEpisode": {
-        "Doc": "base_task",
-        "baseTask": "EpisodeOcrReplace",
-        "action": "ClickRect",
-        "isAscii": true,
-        "text": [],
-        "roi": [244, 270, 129, 49],
-        "specificRect": [787, 281, 154, 154],
-        "next": ["#self", "Stop"]
-    },
-    "00@EnterEpisode": {
-        "text": ["EPISODE00"]
-    },
-    "01@EnterEpisode": {
-        "text": ["EPISODE01"]
-    },
-    "02@EnterEpisode": {
-        "text": ["EPISODE02"]
-    },
-    "03@EnterEpisode": {
-        "text": ["EPISODE03"]
-    },
-    "04@EnterEpisode": {
-        "text": ["EPISODE04"]
-    },
-    "05@EnterEpisode": {
-        "text": ["EPISODE05"]
-    },
-    "06@EnterEpisode": {
-        "text": ["EPISODE06"]
-    },
-    "07@EnterEpisode": {
-        "text": ["EPISODE07"]
-    },
-    "08@EnterEpisode": {
-        "text": ["EPISODE08"]
-    },
-    "09@EnterEpisode": {
-        "text": ["EPISODE09"]
-    },
-    "10@EnterEpisode": {
-        "text": ["EPISODE10"]
-    },
-    "11@EnterEpisode": {
-        "text": ["EPISODE11"]
-    },
-    "12@EnterEpisode": {
-        "text": ["EPISODE12"]
-    },
-    "13@EnterEpisode": {
-        "text": ["EPISODE13"]
-    },
-    "14@EnterEpisode": {
-        "text": ["EPISODE14"]
+    "EnterEpisodeNew-Click": {
+        "algorithm": "OcrDetect",
+        "action": "ClickSelf",
+        "text": ["前往章节"],
+        "roi": [1078, 595, 112, 42]
     },
     "LevelOfDifficulty": {
         "Doc": "base_task",
@@ -327,65 +279,6 @@
         "text": ["进入作战"],
         "roi": [473, 572, 329, 144]
     },
-    "SwipeLeftToEpisode": {
-        "Doc": "base_task",
-        "baseTask": "EpisodeOcrReplace",
-        "action": "Swipe",
-        "isAscii": true,
-        "text": [],
-        "roi": [244, 270, 129, 49],
-        "specificRect": [790, 310, 10, 10],
-        "rectMove": [1200, 310, 10, 10],
-        "specialParams": [200, 0, 2, 0],
-        "maxTimes": 20,
-        "next": ["EnterEpisode", "#self"],
-        "postDelay": 500
-    },
-    "14@SwipeLeftToEpisode": {
-        "text": ["EPISODE15"]
-    },
-    "13@SwipeLeftToEpisode": {
-        "text": ["EPISODE14", "EPISODE15"]
-    },
-    "12@SwipeLeftToEpisode": {
-        "text": ["EPISODE13", "EPISODE14", "EPISODE15"]
-    },
-    "11@SwipeLeftToEpisode": {
-        "text": ["EPISODE12", "EPISODE13", "EPISODE14", "EPISODE15"]
-    },
-    "10@SwipeLeftToEpisode": {
-        "text": ["EPISODE11", "EPISODE12", "EPISODE13", "EPISODE14", "EPISODE15"]
-    },
-    "09@SwipeLeftToEpisode": {
-        "text": ["EPISODE10", "EPISODE11", "EPISODE12", "EPISODE13", "EPISODE14", "EPISODE15"]
-    },
-    "08@SwipeLeftToEpisode": {
-        "text": ["_SKIP_"]
-    },
-    "07@SwipeLeftToEpisode": {
-        "text": ["EPISODE08"]
-    },
-    "06@SwipeLeftToEpisode": {
-        "text": ["EPISODE07", "EPISODE08"]
-    },
-    "05@SwipeLeftToEpisode": {
-        "text": ["EPISODE06", "EPISODE07", "EPISODE08"]
-    },
-    "04@SwipeLeftToEpisode": {
-        "text": ["EPISODE05", "EPISODE06", "EPISODE07", "EPISODE08"]
-    },
-    "03@SwipeLeftToEpisode": {
-        "text": ["_SKIP_"]
-    },
-    "02@SwipeLeftToEpisode": {
-        "text": ["EPISODE03"]
-    },
-    "01@SwipeLeftToEpisode": {
-        "text": ["EPISODE02", "EPISODE03"]
-    },
-    "00@SwipeLeftToEpisode": {
-        "text": ["EPISODE01", "EPISODE02", "EPISODE03"]
-    },
     "StageNavigationBegin": {
         "algorithm": "JustReturn",
         "next": ["ClickStageName", "FullStageNavigation"]
@@ -414,6 +307,7 @@
             ["c", "C"],
             ["o", "O"],
             ["g", "8"],
+            ["t", "T"],
             [":", ""],
             ["'", ""],
             ["(H\\d+)O(?=-)", "$010"],
@@ -447,6 +341,7 @@
             ["c", "C"],
             ["o", "O"],
             ["g", "8"],
+            ["t", "T"],
             [":", ""],
             ["'", ""],
             ["(H\\d+)O(?=-)", "$010"],
@@ -471,14 +366,8 @@
         "template": ["NormalDifficulty.png", "NormalDifficulty-Chapter15.png"],
         "next": []
     },
-    "Episode": {
-        "Doc": "base_task",
-        "algorithm": "JustReturn",
-        "next": ["EnterEpisodeNew", "SwipeLeftToEpisode", "EnterEpisode"]
-    },
     "EpisodeNew": {
         "Doc": "base_task",
-        "Doc2": "15 章开始全部用新导航",
         "algorithm": "JustReturn",
         "next": ["EnterEpisodeNew", "SwipeUpToEpisode"]
     },
@@ -492,64 +381,64 @@
         "exceededNext": ["Stop"]
     },
     "Episode0": {
-        "baseTask": "00@Episode",
-        "sub": ["ToChapter1@StageTheme"]
+        "baseTask": "00@EpisodeNew",
+        "sub": ["ToChapterNew@StageTheme"]
     },
     "Episode1": {
-        "baseTask": "01@Episode",
-        "sub": ["ToChapter1@StageTheme"]
+        "baseTask": "01@EpisodeNew",
+        "sub": ["ToChapterNew@StageTheme"]
     },
     "Episode2": {
-        "baseTask": "02@Episode",
-        "sub": ["ToChapter1@StageTheme"]
+        "baseTask": "02@EpisodeNew",
+        "sub": ["ToChapterNew@StageTheme"]
     },
     "Episode3": {
-        "baseTask": "03@Episode",
-        "sub": ["ToChapter1@StageTheme"]
+        "baseTask": "03@EpisodeNew",
+        "sub": ["ToChapterNew@StageTheme"]
     },
     "Episode4": {
-        "baseTask": "04@Episode",
-        "sub": ["ToChapter2@StageTheme"]
+        "baseTask": "04@EpisodeNew",
+        "sub": ["ToChapterNew@StageTheme"]
     },
     "Episode5": {
-        "baseTask": "05@Episode",
-        "sub": ["ToChapter2@StageTheme"]
+        "baseTask": "05@EpisodeNew",
+        "sub": ["ToChapterNew@StageTheme"]
     },
     "Episode6": {
-        "baseTask": "06@Episode",
-        "sub": ["ToChapter2@StageTheme"]
+        "baseTask": "06@EpisodeNew",
+        "sub": ["ToChapterNew@StageTheme"]
     },
     "Episode7": {
-        "baseTask": "07@Episode",
-        "sub": ["ToChapter2@StageTheme"]
+        "baseTask": "07@EpisodeNew",
+        "sub": ["ToChapterNew@StageTheme"]
     },
     "Episode8": {
-        "baseTask": "08@Episode",
-        "sub": ["ToChapter2@StageTheme"]
+        "baseTask": "08@EpisodeNew",
+        "sub": ["ToChapterNew@StageTheme"]
     },
     "Episode9": {
-        "baseTask": "09@Episode",
-        "sub": ["ToChapter3@StageTheme"]
+        "baseTask": "09@EpisodeNew",
+        "sub": ["ToChapterNew@StageTheme"]
     },
     "Episode10": {
-        "baseTask": "10@Episode",
-        "sub": ["ToChapter3@StageTheme"]
+        "baseTask": "10@EpisodeNew",
+        "sub": ["ToChapterNew@StageTheme"]
     },
     "Episode11": {
-        "baseTask": "11@Episode",
-        "sub": ["ToChapter3@StageTheme"]
+        "baseTask": "11@EpisodeNew",
+        "sub": ["ToChapterNew@StageTheme"]
     },
     "Episode12": {
-        "baseTask": "12@Episode",
-        "sub": ["ToChapter3@StageTheme"]
+        "baseTask": "12@EpisodeNew",
+        "sub": ["ToChapterNew@StageTheme"]
     },
     "Episode13": {
-        "baseTask": "13@Episode",
-        "sub": ["ToChapter3@StageTheme"]
+        "baseTask": "13@EpisodeNew",
+        "sub": ["ToChapterNew@StageTheme"]
     },
     "Episode14": {
-        "baseTask": "14@Episode",
-        "sub": ["ToChapter3@StageTheme"]
+        "baseTask": "14@EpisodeNew",
+        "sub": ["ToChapterNew@StageTheme"]
     },
     "Episode15": {
         "baseTask": "15@EpisodeNew",
@@ -759,11 +648,11 @@
         "Doc": "该任务的 ocrReplace 被所有涉及干员名的识别任务复用，中文被拆成3字节处理，需要包括号",
         "fullMatch": true,
         "ocrReplace": [
-            ["^(?:[<4~]|《|。)+", ""],
+            ["^(?:[<4~]|《|。ぐ)+", ""],
             ["^c(?!ast)", ""],
             ["^\\^一", ""],
-            ["^_(?=.)", ""],
-            ["^_$", ""],
+            ["^[_<>]*(?=.)", ""],
+            ["[_<>]*$", ""],
             [".*弦惊.*", "“弦惊”"],
             [".*亚梅塔", "菲亚梅塔"],
             [".*逍遥.*", "“逍遥”"],
@@ -780,14 +669,8 @@
             [".*威龙陈", "假日威龙陈"],
             ["青积", "青枳"],
             [".*烬艾雅法.*", "纯烬艾雅法拉"],
-            ["^(山.+|一山$)", "山"],
-            ["^一余$", "余"],
-            ["^一锏$", "锏"],
-            ["^(煌.*|一煌$)", "煌"],
-            ["^(年.?|一年)$", "年"],
-            ["^(委|泰|一黍)$", "黍"],
-            ["^(令.+|一令$)", "令"],
-            ["^(夕.*|H$|一夕$)", "夕"],
+            ["^[委泰黍]$", "黍"],
+            ["^[H夕]$", "夕"],
             ["12E", "12F"],
             ["归.*幽灵鲨", "归溟幽灵鲨"],
             ["(临六$|^临光.*)", "临光"],
@@ -824,7 +707,10 @@
             ["Miss\\.[Cc]hristine", "Miss.Christine"],
             ["^野.{0,2}$", "野鬃"],
             ["^(“|”|\\\\|\")?斩(“|”|\\\\|\")?$", "“斩”"],
-            ["八.*海铃", "八幡海铃"]
+            ["八.*海铃", "八幡海铃"],
+            [".*英调香师", "撷英调香师"],
+            ["矿石.*杀手.*", "矿石“杀手”"],
+            [".*涤火杰西卡", "涤火杰西卡"]
         ]
     },
     "SwitchAccount@StartUpBegin": {
@@ -967,6 +853,7 @@
     "StartUpThemes": {
         "algorithm": "JustReturn",
         "next": [
+            "BiliBiliNoMorePromptsNextTime",
             "LeidianGoogleFrameworkConfirm",
             "GameStart",
             "StartToWakeUp",
@@ -987,15 +874,31 @@
         "Doc": "用以关闭雷电模拟器启动外服明日方舟时弹出的未安装谷歌套件的提示",
         "next": ["StartUpThemes#next"]
     },
+    "BiliBiliNoMorePromptsNextTime": {
+        "action": "ClickSelf",
+        "algorithm": "OcrDetect",
+        "text": ["该内容不再展示"],
+        "roi": [200, 430, 430, 260],
+        "maxTimes": 5,
+        "Doc": "bilibili 活动的该内容不再展示",
+        "next": ["BiliBiliNoMorePromptsNextTimeClose"]
+    },
+    "BiliBiliNoMorePromptsNextTimeClose": {
+        "action": "ClickSelf",
+        "roi": [930, 120, 150, 150],
+        "maxTimes": 5,
+        "Doc": "bilibili 活动的该内容不再展示右上角的关闭按钮",
+        "next": ["StartUpThemes#next"]
+    },
     "StartUpBegin": {
         "algorithm": "JustReturn",
         "next": [
             "StartUp@StartUpThemes#next",
             "StartUpBegin@LoadingIcon",
             "StartUp@ReturnButtons#next",
-            "StartUp@EndOfAction"
-        ],
-        "onErrorNext": ["StartUpBegin@SwitchTheme@ToggleSettingsMenu"]
+            "StartUp@EndOfAction",
+            "StartUp@PRTS#next"
+        ]
     },
     "GameStart": {
         "action": "ClickSelf",
@@ -1114,7 +1017,12 @@
         "algorithm": "OcrDetect",
         "text": ["正在提交", "反馈至神经"],
         "roi": [700, 600, 300, 120],
-        "next": ["LoadingText", "#next", "#back"]
+        "next": ["LoadingText", "LoadingTextPostDelay"]
+    },
+    "LoadingTextPostDelay": {
+        "algorithm": "JustReturn",
+        "postDelay": 2000,
+        "next": ["#next", "#back"]
     },
     "NextAfterLoadingText": {
         "baseTask": "LoadingText",
@@ -1233,7 +1141,7 @@
         "algorithm": "OcrDetect",
         "text": ["切换"],
         "action": "ClickSelf",
-        "roi": [966, 577, 315, 142],
+        "roi": [966, 577, 314, 142],
         "next": ["AnnihilationStage"]
     },
     "AnnihilationReturn": {
@@ -1256,8 +1164,7 @@
     },
     "StageBegin": {
         "algorithm": "JustReturn",
-        "next": ["Fight@ReturnButtons#next", "Fight", "Fight@CloseAnnos#next"],
-        "onErrorNext": ["StageBegin@SwitchTheme@ToggleSettingsMenu"]
+        "next": ["Fight@ReturnButtons#next", "Fight", "Fight@CloseAnnos#next"]
     },
     "FightBegin": {
         "Docs": "Fight@前缀保证各种任务的Main可以自动寻到Fight",
@@ -1268,8 +1175,7 @@
             "Fight@UsePrts-StageSN",
             "Fight@StartButton1",
             "Fight@PRTS#next"
-        ],
-        "onErrorNext": ["FightBegin@SwitchTheme@ToggleSettingsMenu"]
+        ]
     },
     "LastOrCurBattleBegin": {
         "algorithm": "JustReturn",
@@ -1282,8 +1188,7 @@
             "Fight",
             "Fight@CloseAnnos#next",
             "Fight@PRTS#next"
-        ],
-        "onErrorNext": ["LastOrCurBattleBegin@SwitchTheme@ToggleSettingsMenu"]
+        ]
     },
     "UsePrts": {
         "action": "ClickSelf",
@@ -1368,7 +1273,7 @@
         "postDelay": 1000,
         "roi": [1010, 625, 260, 61],
         "exceededNext": ["StageSNReturnFlag", "Stop"],
-        "reduceOtherTimes": ["(ClickCornerAfterPRTS+ClickCorner)*5"],
+        "reduceOtherTimes": ["(ClickCornerAfterPRTS+ClickCorner)*10"],
         "next": [
             "StartButton2",
             "UseMedicine",
@@ -1393,6 +1298,7 @@
     "AnnihilationConfirm": {
         "action": "ClickSelf",
         "roi": [992, 584, 288, 136],
+        "onErrorNext": ["Stop"],
         "next": ["EndOfActionAnnihilation", "EndOfAction"]
     },
     "StageSNFlag": {
@@ -1431,7 +1337,7 @@
     },
     "PRTS1": {
         "template": "BattleOfficiallyBegin.png",
-        "roi": [1165, 20, 65, 65],
+        "roi": [1165, 20, 75, 65],
         "maskRange": [100, 255],
         "postDelay": 5000,
         "next": ["PRTS#next", "OfflineConfirm", "WaitAfterPRTS"]
@@ -1450,16 +1356,16 @@
     },
     "WaitAfterPRTS": {
         "algorithm": "JustReturn",
-        "reduceOtherTimes": ["ClickCornerAfterPRTS*5"],
+        "reduceOtherTimes": ["ClickCornerAfterPRTS*10"],
         "next": ["PRTS#next", "WaitAfterPRTS@LoadingText", "WaitAfterPRTS@LoadingIcon", "ClickCornerAfterPRTS"]
     },
     "ClickCornerAfterPRTS": {
         "algorithm": "JustReturn",
         "action": "ClickRect",
         "Doc": "点击屏幕右边，不会点到掉落物品，且不会关掉关卡选择的一块区域",
-        "Doc2": "在比较卡的时候点击屏幕，或是在升级时点击屏幕以进入到结算界面，最多 5 次，间隔 3s",
-        "specificRect": [1000, 100, 270, 10],
-        "maxTimes": 5,
+        "Doc2": "在比较卡的时候点击屏幕，或是在升级时点击屏幕以进入到结算界面，最多 10 次，间隔 3s",
+        "specificRect": [1260, 100, 10, 10],
+        "maxTimes": 10,
         "postDelay": 3000,
         "next": ["EndOfAction", "(ClickCorner + WaitAfterPRTS + StartUpThemes)#next ^ #self", "#self"],
         "exceededNext": ["RestartGameAndContinue"]
@@ -1496,7 +1402,7 @@
         "algorithm": "JustReturn",
         "action": "ClickRect",
         "specificRect": [1000, 20, 270, 50],
-        "maxTimes": 5,
+        "maxTimes": 10,
         "next": [
             "StartButton1",
             "StartButton2",
@@ -1715,7 +1621,7 @@
         "text": ["前往上一次作战", "作战"],
         "roi": [916, 479, 249, 127],
         "action": "ClickSelf",
-        "next": ["UsePrts-Annihilation", "UsePrts", "UsePrts-StageSN", "StartButton1"]
+        "next": ["UsePrts-Annihilation", "UsePrts", "UsePrts-StageSN", "StartButton1", "#self"]
     },
     "RecruitBegin": {
         "algorithm": "JustReturn",
@@ -1725,8 +1631,7 @@
             "Recruit@ReturnButtons#next",
             "Recruit@CloseAnnos#next",
             "Recruit@OfflineConfirm"
-        ],
-        "onErrorNext": ["RecruitBegin@SwitchTheme@ToggleSettingsMenu"]
+        ]
     },
     "Recruit": {
         "action": "DoNothing",
@@ -1792,8 +1697,7 @@
     "MiningActivitiesBegin": {
         "algorithm": "JustReturn",
         "sub": ["AwardExpandCheckFlow"],
-        "next": ["MiningActivitiesReturnHome@ReturnButtons#next", "MiningActivitiesReturnHome", "MiningActivities"],
-        "onErrorNext": ["MiningActivitiesBegin@SwitchTheme@ToggleSettingsMenu"]
+        "next": ["MiningActivitiesReturnHome@ReturnButtons#next", "MiningActivitiesReturnHome", "MiningActivities"]
     },
     "MiningActivitiesReturnHome": {
         "baseTask": "Home",
@@ -1828,8 +1732,7 @@
     "OrundumActivitiesBegin": {
         "algorithm": "JustReturn",
         "sub": ["AwardExpandCheckFlow"],
-        "next": ["OrundumActivitiesReturnHome@ReturnButtons#next", "OrundumActivitiesReturnHome", "OrundumActivities"],
-        "onErrorNext": ["OrundumActivitiesBegin@SwitchTheme@ToggleSettingsMenu"]
+        "next": ["OrundumActivitiesReturnHome@ReturnButtons#next", "OrundumActivitiesReturnHome", "OrundumActivities"]
     },
     "OrundumActivitiesReturnHome": {
         "baseTask": "Home",
@@ -1901,8 +1804,7 @@
             "RecruitingActivitiesReturnHome@ReturnButtons#next",
             "RecruitingActivitiesReturnHome",
             "RecruitingActivities"
-        ],
-        "onErrorNext": ["RecruitingActivitiesBegin@SwitchTheme@ToggleSettingsMenu"]
+        ]
     },
     "RecruitingActivitiesReturnHome": {
         "baseTask": "Home",
@@ -1996,8 +1898,7 @@
             "SpecialAccessActivitiesReturnHome@ReturnButtons#next",
             "SpecialAccessActivitiesReturnHome",
             "SpecialAccessActivities"
-        ],
-        "onErrorNext": ["SpecialAccessActivitiesBegin@SwitchTheme@ToggleSettingsMenu"]
+        ]
     },
     "SpecialAccessActivitiesReturnHome": {
         "baseTask": "Home",
@@ -2044,8 +1945,7 @@
             "DailyTask",
             "WeeklyTask",
             "Award@CloseAnnos#next"
-        ],
-        "onErrorNext": ["AwardBegin@SwitchTheme@ToggleSettingsMenu"]
+        ]
     },
     "Award": {
         "action": "DoNothing",
@@ -2094,8 +1994,7 @@
     },
     "MailBegin": {
         "algorithm": "JustReturn",
-        "next": ["MailReturnToHome@ReturnButtons#next", "MailReturnToHome", "ReceiveMail"],
-        "onErrorNext": ["MailBegin@SwitchTheme@ToggleSettingsMenu"]
+        "next": ["MailReturnToHome@ReturnButtons#next", "MailReturnToHome", "ReceiveMail"]
     },
     "MailReturnToHome": {
         "baseTask": "Home",
@@ -2143,8 +2042,7 @@
             "VisitNextBlack",
             "Visit@ReturnButtons#next",
             "Visit@CloseAnnos#next"
-        ],
-        "onErrorNext": ["VisitBegin@SwitchTheme@ToggleSettingsMenu"]
+        ]
     },
     "Visit": {
         "action": "DoNothing",
@@ -2171,6 +2069,7 @@
         "colorScales": [[253, 255]],
         "pureColor": true,
         "roi": [952, 105, 267, 601],
+        "templThreshold": 0.8,
         "next": ["VisitNext", "VisitNext@LoadingText", "VisitNextBlack", "VisitNextOcr"],
         "postDelay": 2000
     },
@@ -2206,8 +2105,7 @@
     },
     "MallBegin": {
         "algorithm": "JustReturn",
-        "next": ["Mall@ReturnButtons#next", "Mall", "Mall@CloseAnnos#next"],
-        "onErrorNext": ["MallBegin@SwitchTheme@ToggleSettingsMenu"]
+        "next": ["Mall@ReturnButtons#next", "Mall", "Mall@CloseAnnos#next"]
     },
     "Mall": {
         "action": "DoNothing",
@@ -2399,8 +2297,7 @@
             "Infrast@ReturnButtons#next",
             "Infrast@CloseAnnos#next",
             "Infrast@OfflineConfirm"
-        ],
-        "onErrorNext": ["InfrastBegin@SwitchTheme@ToggleSettingsMenu"]
+        ]
     },
     "Infrast@MainThemes": {
         "next": ["InfrastBegin#next"]
@@ -2443,7 +2340,7 @@
         "Doc": "干员疲劳、线索收集 是不能一键收获的，所以要先退出一键收获的界面，这里点击的是控制中枢左侧那一片空白的区域",
         "algorithm": "JustReturn",
         "action": "ClickRect",
-        "specificRect": [250, 100, 380, 140],
+        "specificRect": [250, 100, 50, 50],
         "next": ["Stop"]
     },
     "InfrastEnterRotation": {
@@ -3099,7 +2996,8 @@
         "roi": [286, 550, 366, 130]
     },
     "BackToReceptionMain": {
-        "algorithm": "JustReturn",
+        "template": "ReceptionFlag.png",
+        "roi": [350, 0, 200, 100],
         "action": "ClickRect",
         "specificRect": [280, 96, 130, 32],
         "postDelay": 2000
@@ -3134,7 +3032,8 @@
         "template": "GetClue2.png",
         "action": "ClickSelf",
         "roi": [800, 600, 480, 120],
-        "next": ["InfrastClueSelfMaybeFull", "ReceptionFlag"]
+        "postDelay": 2000,
+        "next": ["BackToReceptionMain"]
     },
     "CloseCluePage": {
         "action": "ClickSelf",
@@ -3157,8 +3056,16 @@
     },
     "InfrastClueQuickInsert": {
         "Doc": "快速置入：官服新增的批量置入线索按钮模板占位",
-        "action": "ClickSelf",
         "roi": [1058, 572, 148, 148]
+    },
+    "InfrastClueQuickInsertConfirm": {
+        "baseTask": "NumberOcrReplace",
+        "Doc": "满线索再放",
+        "fullMatch": true,
+        "binThreshold": [180, 255],
+        "useRaw": false,
+        "roi": [1250, 615, 28, 28],
+        "rectMove": [-110, 30, 110, 10]
     },
     "InfrastClueQuickSendDuplicates": {
         "Doc": "快速传递重复线索：批量传递重复线索按钮模板占位",
@@ -3184,7 +3091,7 @@
         "templThreshold": 0.7,
         "action": "ClickSelf",
         "roi": [0, 0, 180, 80],
-        "next": ["ReceptionFlag"],
+        "next": ["ReceptionFlag", "CloseSendClue"],
         "postDelay": 3000
     },
     "SendClues": {
@@ -3235,6 +3142,7 @@
         "template": "SendClueConfirm.png",
         "action": "ClickSelf",
         "roi": [1150, 50, 100, 160],
+        "postDelay": 500,
         "next": ["ClueGiveTo1stConfirm@LoadingText", "SelectClue", "CloseSendClue"]
     },
     "ClueGiveTo2nd": {
@@ -3247,6 +3155,7 @@
         "template": "SendClueConfirm.png",
         "action": "ClickSelf",
         "roi": [1150, 200, 100, 160],
+        "postDelay": 500,
         "next": ["ClueGiveTo2ndConfirm@LoadingText", "SelectClue", "CloseSendClue"]
     },
     "ClueGiveTo3rd": {
@@ -3259,6 +3168,7 @@
         "template": "SendClueConfirm.png",
         "action": "ClickSelf",
         "roi": [1150, 350, 100, 160],
+        "postDelay": 500,
         "next": ["ClueGiveTo3rdConfirm@LoadingText", "SelectClue", "CloseSendClue"]
     },
     "ClueGiveTo4th": {
@@ -3271,6 +3181,7 @@
         "template": "SendClueConfirm.png",
         "action": "ClickSelf",
         "roi": [1150, 500, 100, 160],
+        "postDelay": 500,
         "next": ["ClueGiveTo4thConfirm@LoadingText", "SelectClue", "CloseSendClue"]
     },
     "CloseSendClue": {
@@ -3589,6 +3500,17 @@
     "BattleQuickFormation-OperNameFlag7": {
         "baseTask": "BattleQuickFormation-OperNameFlagBase"
     },
+    "BattleQuickFormation-Level": {
+        "algorithm": "OcrDetect",
+        "text": [],
+        "rectMove_Doc": "基于BattleQuickFormation-OperNameFlag进行偏移",
+        "rectMove": [-1, 201, 39, 24],
+        "isAscii": true
+    },
+    "BattleQuickFormation-Elite": {
+        "template": ["BattleQuickFormation-Elite2.png", "BattleQuickFormation-Elite1.png"],
+        "rectMove": [7, 151, 24, 35]
+    },
     "BattleQuickFormationOCR": {
         "algorithm": "OcrDetect",
         "fullMatch": true,
@@ -3602,67 +3524,9 @@
             "trim_threshold_low",
             "trim_threshold_high",
             "左侧收缩时检测图的底部屏蔽高度",
-            "左侧收缩时连续n像素低于bin_thresh"
+            "左侧收缩时连续 n 像素低于 bin_thresh"
         ],
-        "specialParams": [140, 2, 0, 0, 3, 10]
-    },
-    "BattleQuickFormationSkill1": {
-        "algorithm": "JustReturn",
-        "action": "ClickRect",
-        "specificRect": [106, 385, 1, 100]
-    },
-    "BattleQuickFormationSkill2": {
-        "algorithm": "JustReturn",
-        "action": "ClickRect",
-        "specificRect": [106, 560, 1, 30]
-    },
-    "BattleQuickFormationSkill3": {
-        "algorithm": "JustReturn",
-        "action": "ClickRect",
-        "specificRect": [106, 650, 1, 30]
-    },
-    "BattleQuickFormationModulePage": {
-        "algorithm": "OcrDetect",
-        "action": "ClickSelf",
-        "text": ["分支"],
-        "roi": [185, 320, 180, 40],
-        "postDelay": 500
-    },
-    "BattleQuickFormationModule-Item": {
-        "template": "empty.png",
-        "action": "ClickSelf",
-        "roi": [5, 370, 80, 350],
-        "postDelay": 300
-    },
-    "BattleQuickFormationModule-0": {
-        "baseTask": "BattleQuickFormationModule-Item"
-    },
-    "BattleQuickFormationModule-1": {
-        "baseTask": "BattleQuickFormationModule-Item"
-    },
-    "BattleQuickFormationModule-2": {
-        "doc": "y模组匹配，由于y模组的字母有两种形式，所以需要两个模板",
-        "baseTask": "BattleQuickFormationModule-Item",
-        "template": ["BattleQuickFormationModule-2-A.png", "BattleQuickFormationModule-2-B.png"]
-    },
-    "BattleQuickFormationModule-3": {
-        "baseTask": "BattleQuickFormationModule-Item"
-    },
-    "BattleQuickFormationModule-4": {
-        "baseTask": "BattleQuickFormationModule-Item"
-    },
-    "BattleQuickFormationSkill-SwipeToTheDown": {
-        "algorithm": "JustReturn",
-        "action": "Swipe",
-        "postDelay": 100,
-        "specificRect": [15, 525, 80, 10],
-        "rectMove": [15, 200, 80, 100],
-        "specialParams": [150, 0, 1, 1]
-    },
-    "BattleQuickFormationConfirm": {
-        "action": "ClickSelf",
-        "roi": [880, 608, 400, 112],
-        "postDelay": 1000
+        "specialParams": [160, 4, 0, 0, 3, 10]
     },
     "BattleStartPre": {
         "algorithm": "OcrDetect",
@@ -3716,7 +3580,7 @@
     "EndOfPlot": {
         "roi": [520, 0, 243, 206],
         "action": "ClickRect",
-        "specificRect": [1000, 100, 270, 10],
+        "specificRect": [1260, 100, 10, 10],
         "next": ["ClickStageName"]
     },
     "SkipForbiddenOperConfirm": {
@@ -3792,16 +3656,34 @@
         "algorithm": "OcrDetect",
         "text": [],
         "fullMatch": true,
-        "roi": [5, 177, 191, 37]
+        "roi": [5, 177, 191, 37],
+        "specialParams_doc": [
+            "bin_threshold",
+            "bin_expansion",
+            "trim_threshold_low",
+            "trim_threshold_high",
+            "收缩时检测图的底部屏蔽高度",
+            "右侧收缩时连续 n 像素低于 bin_thresh"
+        ],
+        "specialParams": [160, 4, 0, 0, 0, 10]
     },
     "SSSBattleOperName": {
         "algorithm": "OcrDetect",
         "text": [],
         "fullMatch": true,
-        "roi": [0, 102, 190, 37]
+        "roi": [0, 102, 190, 37],
+        "specialParams_doc": [
+            "bin_threshold",
+            "bin_expansion",
+            "trim_threshold_low",
+            "trim_threshold_high",
+            "收缩时检测图的底部屏蔽高度",
+            "右侧收缩时连续 n 像素低于 bin_thresh"
+        ],
+        "specialParams": [160, 4, 0, 0, 0, 10]
     },
     "BattleOfficiallyBegin": {
-        "roi": [1165, 20, 65, 65],
+        "roi": [1165, 20, 75, 65],
         "maskRange": [100, 255],
         "templThreshold": 0.7
     },
@@ -3830,7 +3712,7 @@
     },
     "BattlePauseCancelCheck": {
         "template": "BattleOfficiallyBegin.png",
-        "roi": [1165, 20, 65, 65],
+        "roi": [1165, 20, 75, 65],
         "maskRange": [100, 255]
     },
     "BattleCancelSelection": {
@@ -3881,7 +3763,7 @@
         "rectMove": [-48, -48, 96, 96]
     },
     "BattleKillsFlag": {
-        "roi": [150, 0, 600, 60],
+        "roi": [150, 0, 600, 70],
         "maskRange": [1, 255],
         "templThreshold": 0.6
     },
@@ -3889,13 +3771,15 @@
         "algorithm": "OcrDetect",
         "isAscii": true,
         "text": [],
-        "roi": [50, 0, 100, 40],
+        "roi": [40, -20, 100, 40],
+        "useRaw": false,
         "specialParams_doc": "Kill区域变化阈值, 模板匹配, 100=1.0; 正常在 0.997-1 之间波动, 少有0.995; _5->_6 的分数最高, 可达0.94",
         "specialParams": [98]
     },
     "BattleCostData": {
         "baseTask": "NumberOcrReplace",
         "roi": [1199, 494, 80, 44],
+        "useRaw": false,
         "specialParams_doc": "Cost数字变化阈值, 模板匹配, 100=1.0; 正常在 0.997-1 之间波动, 少有0.995; _5->_6 的分数最高, 0.85上下",
         "specialParams": [98]
     },
@@ -3932,7 +3816,7 @@
     },
     "BattleOpersFlag": {
         "templThreshold": 0.65,
-        "roi": [0, 588, 1280, 18],
+        "roi": [35, 588, 1245, 18],
         "maskRange": [1, 255]
     },
     "BattleAvatarReMatch": {
@@ -4029,13 +3913,14 @@
         "useRaw": false,
         "ocrReplace": [
             ["—{1,2}", "-"],
+            ["-[IiLl\\|]", "-1"],
+            ["(-\\d+)[Oo]", "${1}0"],
             ["^.+-EX-?\\d+.*$", "_INVALID_"],
             ["^.+-S-?\\d+.*$", "_INVALID_"],
             ["^.+-MO-?\\d+.*$", "_INVALID_"],
             ["^OF-1$", "_INVALID_"],
             ["^Ap-", "AP-"],
-            ["^Bl-", "BI-"],
-            ["-1O$", "-10"]
+            ["^Bl-", "BI-"]
         ],
         "roi": [140, 60, 200, 55]
     },
@@ -4153,8 +4038,9 @@
             ["[Oo]", "0"],
             ["[Ii]", "1"],
             ["[Ll]", "1"],
-            ["\\|", "1"],
+            ["[\\{\\}\\[\\]]", "1"],
             ["B", "8"],
+            ["台", "8"],
             ["十", "+"],
             ["萬", "万"],
             ["만", "万"],
@@ -4196,12 +4082,11 @@
     },
     "DepotQuantity": {
         "template": "empty.png",
-        "specialParams": [150, 255]
+        "specialParams": [140, 255]
     },
     "DepotBegin": {
         "algorithm": "JustReturn",
-        "next": ["Depot", "DepotMaterialTab", "DepotAllTab", "DepotMaterialTabClicked", "Depot@ReturnButtons#next"],
-        "onErrorNext": ["DepotBegin@SwitchTheme@ToggleSettingsMenu"]
+        "next": ["Depot", "DepotMaterialTab", "DepotAllTab", "DepotMaterialTabClicked", "Depot@ReturnButtons#next"]
     },
     "Depot": {
         "action": "DoNothing",
@@ -4278,8 +4163,7 @@
             "OperBoxSortTabSelect",
             "OperBoxRoleTab",
             "OperBox@ReturnButtons#next"
-        ],
-        "onErrorNext": ["OperBoxBegin@SwitchTheme@ToggleSettingsMenu"]
+        ]
     },
     "OperBox": {
         "action": "DoNothing",
@@ -4462,12 +4346,16 @@
         "action": "ClickSelf",
         "algorithm": "OcrDetect",
         "text": ["阵容确认"],
-        "roi": [992, 576, 288, 144]
+        "roi": [992, 576, 288, 144],
+        "next": ["#self", "Stop"]
     },
     "SSSStageNameOCR": {
         "algorithm": "OcrDetect",
         "text": [],
         "isAscii": true,
+        "withoutDet": true,
+        "useRaw": false,
+        "binThreshold": [180, 255],
         "roi": [33, 272, 85, 36],
         "ocrReplace": [
             ["LT(?=\\d)", "LT-"],
@@ -4655,13 +4543,13 @@
     "ClickCornerUntilStartButton": {
         "algorithm": "JustReturn",
         "action": "ClickRect",
-        "specificRect": [1000, 100, 270, 10],
+        "specificRect": [1260, 100, 10, 10],
         "next": ["BattleStartPreFlag", "ClickCornerUntilStartButton"]
     },
     "ClickCornerUntilReturnButton": {
         "algorithm": "JustReturn",
         "action": "ClickRect",
-        "specificRect": [1000, 100, 270, 10],
+        "specificRect": [1260, 100, 10, 10],
         "next": ["ParadoxReturnFlag", "ClickCornerUntilReturnButton"]
     },
     "ParadoxReturnFlag": {
@@ -4696,10 +4584,11 @@
         "rectMove": [-120, -250, 150, 165]
     },
     "BattleHasStarted": {
+        "Doc": "20260109 YJWL更新后暂停按钮向右移动约8像素, 且暂停后亮度上限245 (不知道以前是不是也有这个问题)",
         "template": "empty.png",
-        "roi": [1178, 33, 49, 39],
+        "roi": [1178, 33, 53, 39],
         "specialParams_Doc": "亮度阈值；点的数量",
-        "specialParams": [245, 200]
+        "specialParams": [235, 200]
     },
     "BattleSpeedButton": {
         "template": "empty.png",
@@ -4745,7 +4634,7 @@
         "action": "ClickRect",
         "cache": true,
         "roi": [1000, 117, 115, 60],
-        "specificRect": [1026, 180, 1219, 487]
+        "specificRect": [1026, 180, 193, 487]
     },
     "ConfirmProductChange": {
         "action": "ClickSelf",
@@ -4838,8 +4727,7 @@
             "GachaLastOnceResult",
             "GachaLastTenTimesResult1",
             "GachaLastTenTimesResult2"
-        ],
-        "onErrorNext": ["GachaBegin@SwitchTheme@ToggleSettingsMenu"]
+        ]
     },
     "Gacha": {
         "action": "DoNothing",
@@ -4925,8 +4813,7 @@
     "Store@Begin": {
         "doc": "绿票、黄票商店",
         "algorithm": "JustReturn",
-        "next": ["Store@EnterStore", "Store@EnterTicketStore"],
-        "onErrorNext": ["Store@Begin@SwitchTheme@ToggleSettingsMenu"]
+        "next": ["Store@EnterStore", "Store@EnterTicketStore"]
     },
     "Store@EnterStore": {
         "baseTask": "Mall",

@@ -103,7 +103,7 @@ std::vector<battle::DeploymentOper> BattlefieldMatcher::deployment_analyze() con
         battle::DeploymentOper oper;
         oper.rect = flag_res.rect.move(click_move);
 
-        Rect role_rect = flag_res.rect.move(role_move);
+        Rect role_rect = correct_rect(flag_res.rect.move(role_move), m_image);
         oper.role = oper_role_analyze(role_rect);
         if (oper.role == battle::Role::Unknown) {
             Log.warn("Unknown role");
@@ -113,10 +113,10 @@ std::vector<battle::DeploymentOper> BattlefieldMatcher::deployment_analyze() con
         if (oper.rect.x + oper.rect.width >= m_image.cols) {
             oper.rect.width = m_image.cols - oper.rect.x;
         }
-        Rect avatar_rect = oper.rect.move(avatar_move);
+        Rect avatar_rect = correct_rect(oper.rect.move(avatar_move), m_image);
         oper.avatar = m_image(make_rect<cv::Rect>(avatar_rect));
 
-        Rect available_rect = flag_res.rect.move(avlb_move);
+        Rect available_rect = correct_rect(flag_res.rect.move(avlb_move), m_image);
         oper.available = oper_available_analyze(available_rect);
 
 #ifdef ASST_DEBUG
@@ -279,12 +279,14 @@ BattlefieldMatcher::MatchResult<std::pair<int, int>> BattlefieldMatcher::kills_a
     TemplDetOCRer kills_analyzer(m_image);
     kills_analyzer.set_task_info("BattleKillsFlag", "BattleKills");
     kills_analyzer.set_replace(Task.get<OcrTaskInfo>("NumberOcrReplace")->replace_map);
-    kills_analyzer.set_ocr_use_raw(true);
     auto kills_opt = kills_analyzer.analyze();
     if (!kills_opt) {
         return {};
     }
     const std::string& kills_text = kills_opt->front().text;
+    if (kills_text.empty()) {
+        return {};
+    }
 
     size_t pos = kills_text.find('/');
     if (pos == std::string::npos) {
@@ -308,6 +310,11 @@ BattlefieldMatcher::MatchResult<std::pair<int, int>> BattlefieldMatcher::kills_a
             Log.trace("pre total kills pos:", pre_pos);
             pos = pre_pos - 1;
         }
+    }
+
+    if (kills_text.length() <= pos + 1) {
+        Log.error("kills_text length is too short: text='{}', length={}, pos={}", kills_text, kills_text.size(), pos);
+        return {};
     }
 
     // 例子中的"0"

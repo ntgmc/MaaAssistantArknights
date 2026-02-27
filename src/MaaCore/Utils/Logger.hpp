@@ -18,14 +18,13 @@
 #include <utility>
 
 #include "Common/AsstTypes.h"
-#include "Common/AsstVersion.h"
 #include "Locale.hpp"
+#include "MaaUtils/Conf.h"
 #include "MaaUtils/SingletonHolder.hpp"
 #include "MaaUtils/Time.hpp"
 #include "Meta.hpp"
 #include "NullStreambuf.hpp"
 #include "Platform.hpp"
-#include "Utils/ExceptionStacktrace.hpp"
 #include "WorkingDir.hpp"
 
 #if defined(__APPLE__) || defined(__linux__)
@@ -808,7 +807,7 @@ private:
 
         if (!fp) {
             // 打开失败时回退到原始方法
-            m_ofs = std::ofstream(m_log_path, std::ios::out | std::ios::ate);
+            m_ofs = std::ofstream(m_log_path, std::ios::out | std::ios::app);
         }
         else {
             // 使用文件指针创建新的std::ofstream
@@ -818,11 +817,11 @@ private:
             // 如果需要，这里还可以添加一个安全检查
             if (!m_ofs) {
                 fclose(fp);
-                m_ofs = std::ofstream(m_log_path, std::ios::out | std::ios::ate);
+                m_ofs = std::ofstream(m_log_path, std::ios::out | std::ios::app);
             }
         }
 #else
-        m_ofs = std::ofstream(m_log_path, std::ios::out | std::ios::ate);
+        m_ofs = std::ofstream(m_log_path, std::ios::out | std::ios::app);
 #endif
         // 获取文件大小并设置缓冲区
         m_file_size = std::filesystem::exists(m_log_path) ? std::filesystem::file_size(m_log_path) : 0;
@@ -834,7 +833,7 @@ private:
     {
         trace("-----------------------------");
         trace("MaaCore Process Start");
-        trace("Version", asst::Version);
+        trace("Version", MAA_VERSION);
         trace("Built at", __DATE__, __TIME__);
         trace("User Dir", m_directory);
         trace("-----------------------------");
@@ -874,29 +873,27 @@ private:
 
 #ifdef _WIN32
     // SEH 未处理异常过滤器
-    static LONG WINAPI unhandled_exception_filter(PEXCEPTION_POINTERS pExceptionInfo)
+    static LONG WINAPI unhandled_exception_filter([[maybe_unused]] PEXCEPTION_POINTERS pExceptionInfo)
     {
         try {
             auto& logger = Logger::get_instance();
-            std::string exception_details = utils::ExceptionStacktrace::capture_exception_stack_trace(pExceptionInfo);
             logger.error("=== UNHANDLED EXCEPTION ===");
-            logger.error("Version", asst::Version);
+            logger.error("Version", MAA_VERSION);
             logger.error("Built at", __DATE__, __TIME__);
             logger.error("User Dir", UserDir.get());
-            logger.error(std::format("Module Base Address: 0x{:016X}", utils::ExceptionStacktrace::get_base_address()));
-            logger.error("Exception details with stack trace:");
-            logger.error(exception_details);
             logger.error("============================");
             logger.flush();
-            write_crash_file("Unhandled Exception with Stack Trace", exception_details.c_str());
+            write_crash_file("UNHANDLED EXCEPTION");
         }
         catch (...) {
-            // 如果日志记录失败，直接写入文件
-            write_crash_file("Unhandled Exception", "Failed to capture stack trace");
+            std::cerr << "=== FATAL ERROR ===" << std::endl;
+            std::cerr << "Failed to log exception details to file" << std::endl;
+            std::cerr << "Unhandled exception caught, program terminating..." << std::endl;
+            std::cerr << "===================" << std::endl;
         }
 
         // 返回 EXCEPTION_EXECUTE_HANDLER 让程序正常终止
-        return EXCEPTION_CONTINUE_EXECUTION;
+        return EXCEPTION_EXECUTE_HANDLER;
     }
 #endif
 
@@ -921,38 +918,23 @@ private:
 
             // 再处理 C++ 异常
             std::string exception_info = "Unknown exception";
-            std::string stack_trace;
             if (auto eptr = std::current_exception()) {
                 try {
                     std::rethrow_exception(eptr);
                 }
                 catch (const std::exception& e) {
                     exception_info = std::string("std::exception: ") + e.what() + " (type: " + typeid(e).name() + ")";
-                    stack_trace = utils::ExceptionStacktrace::capture_current_stack_trace();
                 }
                 catch (...) {
                     exception_info = "Unknown exception type";
-                    stack_trace = utils::ExceptionStacktrace::capture_current_stack_trace();
                 }
             }
 
             logger.error("=== FATAL ERROR ===");
-            logger.error("Version", asst::Version);
+            logger.error("Version", MAA_VERSION);
             logger.error("Built at", __DATE__, __TIME__);
             logger.error("User Dir", UserDir.get());
-            logger.error(
-                "MaaCore Base Address:",
-                std::format("0x{:016X}", utils::ExceptionStacktrace::get_base_address()));
             logger.error("Unhandled exception caught:", exception_info);
-            logger.error("Exception stack trace:");
-            if (!stack_trace.empty()) {
-                logger.error(stack_trace);
-                write_crash_file("Unhandled exception stack trace:", stack_trace.c_str());
-            }
-            else {
-                logger.error("empty");
-                write_crash_file("empty");
-            }
             logger.error("Program terminating...");
             logger.error("===================");
             logger.flush();

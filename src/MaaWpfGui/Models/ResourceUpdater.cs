@@ -28,7 +28,7 @@ using MaaWpfGui.ViewModels.UserControl.Settings;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Serilog;
-using static MaaWpfGui.ViewModels.UI.VersionUpdateViewModel;
+using static MaaWpfGui.ViewModels.Dialogs.VersionUpdateDialogViewModel;
 
 namespace MaaWpfGui.Models;
 
@@ -68,11 +68,11 @@ public static class ResourceUpdater
             return false;
         }
 
-        // 把 \MaaResource-main 中的 cache 和 resource 文件夹复制到当前目录
+        // 把 \MaaResource-main 中的 resource 文件夹复制到当前目录
         try
         {
             string basePath = Path.Combine(ExtractFolder, "MaaResource-main");
-            foreach (var folder in new[] { "cache", "resource" })
+            foreach (var folder in new[] { "resource" })
             {
                 DirectoryMerge(
                     Path.Combine(basePath, folder),
@@ -461,6 +461,11 @@ public static class ResourceUpdater
         FileInfo[] files = dir.GetFiles();
         foreach (FileInfo file in files)
         {
+            if (file.Name == ".gitignore")
+            {
+                continue;
+            }
+
             string tempPath = Path.Combine(destDirName, file.Name);
             file.CopyTo(tempPath, true); // 覆盖现有文件
         }

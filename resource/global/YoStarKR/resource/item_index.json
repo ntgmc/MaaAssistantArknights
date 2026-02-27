@@ -975,6 +975,14 @@
         "sortId": 40003,
         "usage": "로도스 아일랜드 인사부에서 특별 발행한 허가증. 특정 시간 동안 특수한 인재를 모집하는 데 쓰인다. 1회 모집으로 10명을 채용할 수 있다."
     },
+    "LINKAGE_TKT_GACHA_10_6501": {
+        "classifyType": "NORMAL",
+        "description": "인재 확보를 위해 박사가 준비해달라 요구했던 긴급수단. 해당 헤드헌팅 항목은 타겟팅과 타임 리미트가 적용되었으며, 그리고 아주 작은 리스크가 존재한다.",
+        "icon": "LINKAGE_TKT_GACHA_10_6501.png",
+        "name": "꿈에 잠긴 애가 헤드헌팅 10회 허가증",
+        "sortId": 40003,
+        "usage": "로도스 아일랜드 인사부에서 특별 발행한 허가증. 특정 시간 동안 특수한 인재를 모집하는 데 쓰인다. 1회 모집으로 10명을 채용할 수 있다."
+    },
     "LMTGS_COIN_1401": {
         "classifyType": "NORMAL",
         "description": "헤드헌팅 회사와 장기적이고 안정적인 협력 관계를 유지한 보답. 효과적으로 지출을 조절할 수 있지만, 매번 이와 같은 수단을 써야 하는 것은 아니다.",
@@ -1133,6 +1141,14 @@
         "icon": "LMTGS_COIN_6101.png",
         "name": "헤드헌팅 데이터 계약",
         "sortId": 10321,
+        "usage": "신형 모집 협약에서 정한 일종의 기간 한정 화폐. 일정 수량을 누적하여 지정된 기간 동안 지정된 오퍼레이터를 채용할 수 있다."
+    },
+    "LMTGS_COIN_6401": {
+        "classifyType": "NORMAL",
+        "description": "헤드헌팅 회사와 장기적이고 안정적인 협력 관계를 유지한 보답. 효과적으로 지출을 조절할 수 있지만, 매번 이와 같은 수단을 써야 하는 것은 아니다.",
+        "icon": "LMTGS_COIN_6401.png",
+        "name": "헤드헌팅 데이터 계약",
+        "sortId": 10322,
         "usage": "신형 모집 협약에서 정한 일종의 기간 한정 화폐. 일정 수량을 누적하여 지정된 기간 동안 지정된 오퍼레이터를 채용할 수 있다."
     },
     "LMTGS_COIN_903": {
@@ -1863,6 +1879,14 @@
         "sortId": -10000,
         "usage": "상응하는 단계별 이벤트 보상을 교환하는 데 사용된다."
     },
+    "act2enemyduel_milestone_point": {
+        "classifyType": "NONE",
+        "description": "이걸 사용하면 듀얼 채널에서 전체 화면에 불꽃놀이 특수효과가 적용된 메시지를 보낼 수 있다고 한다. 하지만 하루 종일 이걸 사용하면서 서로 욕하는 부자들은, 사실 설정에서 이 특수효과를 끌 수 있다는 사실을 아마 모를 것이다.",
+        "icon": "act2enemyduel_milestone_point.png",
+        "name": "듀얼 폭죽",
+        "sortId": -10000,
+        "usage": "듀얼 채널 선물 중에서도 비교적 비싼 유형. 홈페이지에서 실물 보상을 교환할 수 있다. (무료 배송)"
+    },
     "act2mainss_token": {
         "classifyType": "NONE",
         "description": "이함 때문에 불안해하는 아이들을 달래기 위해 라이디언은 통신 및 음성 메시지 저장 기능이 있는 배지를 제작하여, 아이들이 미소를 잃지 않도록 격려했다. 이 소식을 접한 다른 오퍼레이터들도 라이디언에게 배지를 요구해, 각자의 축복과 격려의 메시지를 녹음해 떠나기 전에 함선 구석구석에 숨겨두었다.",
@@ -2023,6 +2047,30 @@
         "sortId": -10000,
         "usage": "스케줄이 촉박하고 촬영장에 압박감이 가득한 가운데, '수상한 검은 그림자'가 수시로 나타나 가뜩이나 정신없는 스태프들을 점점 의심과 혼란에 빠뜨린다. 만약 이 검은 그림자를 찾아낸다면, 그들은 굉장히 고마워할 것이다."
     },
+    "act44side_token_information": {
+        "classifyType": "NONE",
+        "description": "떠도는 소문은 쓸모없어 보이지만, 비밀스러운 단서를 적잖게 숨기고 있다. 그걸 이용할 줄 아는 사람은 그 어떠한 가십거리도 거래의 발판으로 사용한다.",
+        "icon": "act44side_token_information.png",
+        "name": "잡담",
+        "sortId": -10000,
+        "usage": "상담실에서 하루의 영업을 시작할 때 사용한다. 좋은 이야기는 잡담에서 시작하기 마련이니까."
+    },
+    "act44side_token_ticket": {
+        "classifyType": "NONE",
+        "description": "어느 연예인의 '졸업' 송별회 참가 자격을 추첨하는 티켓. 공식 행사는 이미 취소되었지만, 티켓은 여전히 팬들 사이에서 사적으로 유통되며, 지금도 그녀의 커리어 전환점을 기념하고 있다.",
+        "icon": "act44side_token_ticket.png",
+        "name": "연예인 팬미팅 추첨권",
+        "sortId": -10000,
+        "usage": "연예 기획사에서 나눠준 추첨 자격으로 교환할 수 있는 티켓. 어떤 사건이 발생한 후, 한동안 중고시장의 인기 상품이 되어 거의 모든 물건과 교환할 수 있었다."
+    },
+    "act45side_token_puzzlepieces": {
+        "classifyType": "NONE",
+        "description": "아무리 아름다운 꿈이라도 언젠가는 사라진다. 그 꿈을 간직하기 위해, 꿈의 성 주인들은 저마다 미술관을 만들어 꿈을 소중한 예술품처럼 보관한다. 성주들마다 취향이 제각각이니, 잘못 주지 않도록 조심할 것.",
+        "icon": "act45side_token_puzzlepieces.png",
+        "name": "꿈의 조각",
+        "sortId": -10000,
+        "usage": "선명하고 아름다운 꿈의 퍼즐 조각. 꿈의 성 곳곳에 흩어져 있다. 끈기를 가지고 모으면 아름다운 꿈의 한 순간이 차례로 되살아날 것이다."
+    },
     "act4bossrush_milestone_point": {
         "classifyType": "NONE",
         "description": "시뮬레이션에서 옳고 그름은 중요하지 않다. 그것들은 단지 실전에서 올바른 선택을 할 수 있도록 도와주는 보조일 뿐이다.",
@@ -2063,6 +2111,14 @@
         "sortId": -10000,
         "usage": "억제 유닛에 데이터를 업그레이드하는 용도로 사용된다."
     },
+    "act5collection_point_token": {
+        "classifyType": "NONE",
+        "description": "외근 오퍼레이터를 위해 로도스 아일랜드에서 발급한 특별 교환 포인트. 포인트로 긴급 필요 물자를 교환할 수 있다.",
+        "icon": "act5collection_point_token.png",
+        "name": "특별 교환 포인트",
+        "sortId": -10000,
+        "usage": "상응하는 단계별 이벤트 보상을 교환하는 데 사용된다."
+    },
     "act5d0_point_medal": {
         "classifyType": "NONE",
         "description": "쓸데없이 럭셔리하게 순금으로 만들어졌다. 용문의 일류 금조각사가 직접 만들었다고 하며, 테라 상에 한정 수량밖에 존재하지 않는다. 누가봐도 머그잔인데 훈장이라 부르는 건 엠퍼러의 특급 칭찬이란 뜻으로써, 한 모금에 천금의 가치가 있다는 걸 의미한다. 그래도 괜히 여기다 커피를 끓이는 일은 없도록 하자.",
@@ -2086,6 +2142,14 @@
         "name": "작전 협의",
         "sortId": -10000,
         "usage": "협의의 상징. 더 많은 위기 협약 내용을 개방하는데 사용된다."
+    },
+    "act6collection_point_token": {
+        "classifyType": "NONE",
+        "description": "외근 오퍼레이터를 위해 로도스 아일랜드에서 발급한 특별 교환 포인트. 포인트로 긴급 필요 물자를 교환할 수 있다.",
+        "icon": "act6collection_point_token.png",
+        "name": "특별 교환 포인트",
+        "sortId": -10000,
+        "usage": "상응하는 단계별 이벤트 보상을 교환하는 데 사용된다."
     },
     "act6d5_point_firecracker": {
         "classifyType": "NONE",
@@ -2157,7 +2221,7 @@
         "icon": "advanced_material_issue_voucher.png",
         "name": "고급 재료 수령권",
         "sortId": 30201,
-        "usage": "로도스 아일랜드 구매부에서 특별 발행한 수령권. 사용 기간 동안 고급 정예 재료를 받을 수 있다."
+        "usage": "로도스 아일랜드 구매부에서 특별 발행한 수령권. 한정 기간 동안, 사용 시 고급 정예화 재료를 받을 수 있다."
     },
     "advanced_material_voucher_perm": {
         "classifyType": "CONSUME",
@@ -2165,7 +2229,7 @@
         "icon": "advanced_material_voucher_perm.png",
         "name": "고급 재료 수령권",
         "sortId": 60005,
-        "usage": "로도스 아일랜드 구매부에서 특별 발행한 수령권. 사용 기간 동안 고급 정예 재료를 받을 수 있다."
+        "usage": "로도스 아일랜드 구매부에서 특별 발행한 수령권. 사용 시 고급 정예화 재료를 받을 수 있다."
     },
     "ap_supply_lt_010": {
         "classifyType": "CONSUME",
@@ -2286,6 +2350,14 @@
         "name": "특별판! 초강력! 보스 메달!",
         "sortId": -10000,
         "usage": "값비싼 금속으로 제작된 것으로 보이며, 용문폐와 교환할 수 있다."
+    },
+    "itempack_gold_2": {
+        "classifyType": "NONE",
+        "description": "이건 고급 백화점 같은 곳에서 돈 주고 사는 그런 선물이 아니다. 이건 그녀의 취향, 그리고 그녀가 예측한 당신의 기호를 토대로 하나씩 직접 담아 밀봉한 것이다. 당신의 업무 특성을 고려하여 무알코올 소스가 들어있는 병도 하나 있다.",
+        "icon": "itempack_gold_2.png",
+        "name": "정성껏 준비한 시음 세트",
+        "sortId": -10000,
+        "usage": "정성껏 준비한 시음 세트, 용문폐와 교환할 수 있다."
     },
     "itempack_main_1": {
         "classifyType": "NONE",
@@ -2413,7 +2485,7 @@
         "icon": "premium_material_issue_voucher.png",
         "name": "특급 재료 수령권",
         "sortId": 30200,
-        "usage": "로도스 아일랜드 구매부에서 특별 발행한 수령권. 사용 기간 동안 특급 정예 재료를 받을 수 있다."
+        "usage": "로도스 아일랜드 구매부에서 특별 발행한 수령권. 한정 기간 동안, 사용 시 특급 정예화 재료를 받을 수 있다."
     },
     "premium_material_voucher_perm": {
         "classifyType": "CONSUME",
@@ -2421,7 +2493,7 @@
         "icon": "premium_material_voucher_perm.png",
         "name": "특급 재료 수령권",
         "sortId": 60004,
-        "usage": "로도스 아일랜드 구매부에서 특별 발행한 수령권. 사용 기간 동안 특급 정예 재료를 받을 수 있다."
+        "usage": "로도스 아일랜드 구매부에서 특별 발행한 수령권. 사용 시 특급 정예화 재료를 받을 수 있다."
     },
     "randomDiamondShd_1": {
         "classifyType": "CONSUME",
@@ -2735,6 +2807,14 @@
         "sortId": -10000,
         "usage": null
     },
+    "rogue_5_token_bp": {
+        "classifyType": "NONE",
+        "description": null,
+        "icon": "rogue_5_token_bp.png",
+        "name": "길 잃은 창괴",
+        "sortId": -10000,
+        "usage": null
+    },
     "sandbox_1_tokencoin": {
         "classifyType": "NONE",
         "description": "황무지에서 흘린 모든 땀방울은 테라 문명이 번영하는 증거가 될 것이다.",
@@ -2742,6 +2822,14 @@
         "name": "번영 포인트",
         "sortId": -10000,
         "usage": "'번영의 선물'에서 보상을 교환하는 데 사용된다."
+    },
+    "so_char_exp_1": {
+        "classifyType": "NONE",
+        "description": "특근 오퍼레이터의 작전 환경은 매우 복잡하고, 상황 또한 변화무쌍하기에 그것을 기록하는 과정은 상당히 힘들다. 하지만 앞으로의 작전에 도움이 될 수 있다면, 가치는 충분하다.\n이번 총집편에는 비하인드 영상이 특별 추가되었다.",
+        "icon": "so_char_exp_1.png",
+        "name": "특근 작전기록",
+        "sortId": -10000,
+        "usage": "특근 오퍼레이터의 작전 영상을 기록한 정보 기억장치, 특근 오퍼레이터의 경험치를 증가시킨다."
     },
     "token_Obsidian": {
         "classifyType": "NONE",

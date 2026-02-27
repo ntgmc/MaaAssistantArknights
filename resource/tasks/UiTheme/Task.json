@@ -19,15 +19,17 @@
             "TaskDreamland",
             "TaskJieGarden",
             "TaskAveMujica",
-            "TaskTogether"
-        ]
+            "TaskTogether",
+            "TaskLoneTrail"
+        ],
+        "onErrorNext": ["Task-Entry@SwitchTheme@ToggleSettingsMenu"]
     },
     "TaskDefault": {
         "action": "ClickSelf",
         "maskRange": [1, 255],
         "roi": [700, 530, 230, 190],
         "template": "Default/Task.png",
-        "postDelay": 500,
+        "postDelay": 1000,
         "next": ["#self", "Stop"]
     },
     "TaskDark": {
@@ -64,7 +66,7 @@
     },
     "TaskDreamland": {
         "baseTask": "TaskDefault",
-        "template": ["Dreamland/DreamlandDefault/Task.png", "Dreamland/DreamlandDark/Task.png"]
+        "template": ["Dreamland/Day/Task.png", "Dreamland/Night/Task.png"]
     },
     "TaskJieGarden": {
         "baseTask": "TaskDefault",
@@ -79,5 +81,9 @@
         "baseTask": "TaskDefault",
         "templThreshold": 0.9,
         "template": "Together/Task.png"
+    },
+    "TaskLoneTrail": {
+        "baseTask": "TaskDefault",
+        "template": ["LoneTrail/Day/Task.png", "LoneTrail/Night/Task.png"]
     }
 }

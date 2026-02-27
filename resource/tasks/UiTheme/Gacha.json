@@ -19,8 +19,10 @@
             "GachaDreamland",
             "GachaJieGarden",
             "GachaAveMujica",
-            "GachaTogether"
-        ]
+            "GachaTogether",
+            "GachaLoneTrail"
+        ],
+        "onErrorNext": ["Gacha-Entry@SwitchTheme@ToggleSettingsMenu"]
     },
     "GachaDefault": {
         "action": "ClickSelf",
@@ -64,7 +66,7 @@
     },
     "GachaDreamland": {
         "baseTask": "GachaDefault",
-        "template": ["Dreamland/DreamlandDefault/GachaEnter.png", "Dreamland/DreamlandDark/GachaEnter.png"]
+        "template": ["Dreamland/Day/GachaEnter.png", "Dreamland/Night/GachaEnter.png"]
     },
     "GachaJieGarden": {
         "baseTask": "GachaDefault",
@@ -77,5 +79,9 @@
     "GachaTogether": {
         "baseTask": "GachaDefault",
         "template": "Together/GachaEnter.png"
+    },
+    "GachaLoneTrail": {
+        "baseTask": "GachaDefault",
+        "template": ["LoneTrail/Day/GachaEnter.png", "LoneTrail/Night/GachaEnter.png"]
     }
 }

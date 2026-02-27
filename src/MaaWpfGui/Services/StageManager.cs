@@ -24,7 +24,6 @@ using HandyControl.Controls;
 using HandyControl.Data;
 using MaaWpfGui.Helper;
 using MaaWpfGui.Models;
-using MaaWpfGui.Utilities.ValueType;
 using MaaWpfGui.ViewModels.UI;
 using MaaWpfGui.ViewModels.UserControl.Settings;
 using Newtonsoft.Json.Linq;
@@ -99,10 +98,8 @@ public class StageManager
 
         MergePermanentAndActivityStages(webStages);
 
-        _ = Execute.OnUIThreadAsync(() =>
-        {
-            var growlInfo = new GrowlInfo
-            {
+        _ = Execute.OnUIThreadAsync(() => {
+            var growlInfo = new GrowlInfo {
                 IsCustom = true,
                 Message = LocalizationHelper.GetString("ApiUpdateSuccess"),
                 IconKey = "HangoverGeometry",
@@ -185,8 +182,7 @@ public class StageManager
             return null;
         }
 
-        await Task.Run(() =>
-        {
+        await Task.Run(() => {
             _ = Instances.AsstProxy.LoadResourceWhenIdleAsync();
         });
         return activityJson;
@@ -198,7 +194,7 @@ public class StageManager
 
         var clientType = GetClientType();
 
-        bool isDebugVersion = Instances.VersionUpdateViewModel.IsDebugVersion();
+        bool isDebugVersion = Instances.VersionUpdateDialogViewModel.IsDebugVersion();
         bool curVerParsed = TryParseVersion(VersionUpdateSettingsUserControlModel.CoreVersion, out var curVersionObj);
 
         // bool curResourceVerParsed = SemVersion.TryParse(
@@ -223,15 +219,14 @@ public class StageManager
 
     private static Dictionary<string, StageInfo> InitializeDefaultStages()
     {
-        // 这里会被 “剩余理智” 复用，第一个必须是 string.Empty 的
         return new()
         {
             // 「当前/上次」关卡导航
             { string.Empty, new() { Display = LocalizationHelper.GetString("DefaultStage"), Value = string.Empty } },
 
             // 周一和周日的关卡提示
-            { "Pormpt1", new() { Tip = LocalizationHelper.GetString("Pormpt1"), OpenDays = [DayOfWeek.Monday], IsHidden = true } },
-            { "Pormpt2", new() { Tip = LocalizationHelper.GetString("Pormpt2"), OpenDays = [DayOfWeek.Sunday], IsHidden = true } },
+            { "Pormpt1", new() { Tip = LocalizationHelper.GetString("Pormpt1"), OpenDaysOfWeek = [DayOfWeek.Monday], IsHidden = true } },
+            { "Pormpt2", new() { Tip = LocalizationHelper.GetString("Pormpt2"), OpenDaysOfWeek = [DayOfWeek.Sunday], IsHidden = true } },
         };
     }
 
@@ -243,6 +238,7 @@ public class StageManager
             new() { Display = LocalizationHelper.GetString("MiniGameNameGreenTicketStore"), Value = "GreenTicket@Store@Begin", TipKey = "MiniGameNameGreenTicketStoreTip" },
             new() { Display = LocalizationHelper.GetString("MiniGameNameYellowTicketStore"), Value = "YellowTicket@Store@Begin", TipKey = "MiniGameNameYellowTicketStoreTip" },
             new() { Display = LocalizationHelper.GetString("MiniGameNameRAStore"), Value = "RA@Store@Begin", TipKey = "MiniGameNameRAStoreTip" },
+            new() { Display = LocalizationHelper.GetString("MiniGame@SecretFront"), Value = "MiniGame@SecretFront", TipKey = "MiniGame@SecretFrontTip" },
         };
 
         return entries;
@@ -333,8 +329,7 @@ public class StageManager
                 }
             }
 
-            return new MiniGameEntry
-            {
+            return new MiniGameEntry {
                 Display = finalDisplay,
                 DisplayKey = displayKey,
                 Value = value,
@@ -370,8 +365,7 @@ public class StageManager
         }
 
         // 资源全开放活动
-        return new()
-        {
+        return new() {
             IsResourceCollection = true,
             Tip = resourceCollectionData["Tip"]?.ToString(),
             UtcStartTime = ParseDateTime(resourceCollectionData, "UtcStartTime"),
@@ -555,19 +549,14 @@ public class StageManager
             }
         }
 
-        return new StageInfo
-        {
-            Display = display,
-            Value = value,
-            Drop = drop,
-            Activity = new StageActivityInfo
-            {
-                Tip = activityToken?["Tip"]?.ToString(),
-                StageName = activityToken?["StageName"]?.ToString(),
-                UtcStartTime = utcStart,
-                UtcExpireTime = utcExpire,
-            },
+        var activity = new StageActivityInfo {
+            Tip = activityToken?["Tip"]?.ToString(),
+            StageName = activityToken?["StageName"]?.ToString(),
+            UtcStartTime = utcStart,
+            UtcExpireTime = utcExpire,
         };
+
+        return new StageInfo(display, value, drop, activity);
     }
 
     private static void AddPermanentStages(Dictionary<string, StageInfo> tempStage, StageActivityInfo resourceCollection)
@@ -589,14 +578,14 @@ public class StageManager
             // 剿灭模式
             { "Annihilation", new() { Display = LocalizationHelper.GetString("AnnihilationMode"), Value = "Annihilation" } },
 
-            // 芯片本
-            { "PR-A-1", new("PR-A-1", "PR-ATip", [DayOfWeek.Monday, DayOfWeek.Thursday, DayOfWeek.Friday, DayOfWeek.Sunday], resourceCollection) },
+            // 芯片本 - dropGroups 格式：[[PR-X-1的掉落], [PR-X-2的掉落]]
+            { "PR-A-1", new("PR-A-1", "PR-ATip", [DayOfWeek.Monday, DayOfWeek.Thursday, DayOfWeek.Friday, DayOfWeek.Sunday], resourceCollection, [["3231", "3261"], ["3232", "3262"]]) },
             { "PR-A-2", new("PR-A-2", string.Empty, [DayOfWeek.Monday, DayOfWeek.Thursday, DayOfWeek.Friday, DayOfWeek.Sunday], resourceCollection) },
-            { "PR-B-1", new("PR-B-1", "PR-BTip", [DayOfWeek.Monday, DayOfWeek.Tuesday, DayOfWeek.Friday, DayOfWeek.Saturday], resourceCollection) },
+            { "PR-B-1", new("PR-B-1", "PR-BTip", [DayOfWeek.Monday, DayOfWeek.Tuesday, DayOfWeek.Friday, DayOfWeek.Saturday], resourceCollection, [["3251", "3241"], ["3252", "3242"]]) },
             { "PR-B-2", new("PR-B-2", string.Empty, [DayOfWeek.Monday, DayOfWeek.Tuesday, DayOfWeek.Friday, DayOfWeek.Saturday], resourceCollection) },
-            { "PR-C-1", new("PR-C-1", "PR-CTip", [DayOfWeek.Wednesday, DayOfWeek.Thursday, DayOfWeek.Saturday, DayOfWeek.Sunday], resourceCollection) },
+            { "PR-C-1", new("PR-C-1", "PR-CTip", [DayOfWeek.Wednesday, DayOfWeek.Thursday, DayOfWeek.Saturday, DayOfWeek.Sunday], resourceCollection, [["3211", "3271"], ["3212", "3272"]]) },
             { "PR-C-2", new("PR-C-2", string.Empty, [DayOfWeek.Wednesday, DayOfWeek.Thursday, DayOfWeek.Saturday, DayOfWeek.Sunday], resourceCollection) },
-            { "PR-D-1", new("PR-D-1", "PR-DTip", [DayOfWeek.Tuesday, DayOfWeek.Wednesday, DayOfWeek.Saturday, DayOfWeek.Sunday], resourceCollection) },
+            { "PR-D-1", new("PR-D-1", "PR-DTip", [DayOfWeek.Tuesday, DayOfWeek.Wednesday, DayOfWeek.Saturday, DayOfWeek.Sunday], resourceCollection, [["3221", "3281"], ["3222", "3282"]]) },
             { "PR-D-2", new("PR-D-2", string.Empty, [DayOfWeek.Tuesday, DayOfWeek.Wednesday, DayOfWeek.Saturday, DayOfWeek.Sunday], resourceCollection) },
         };
 
@@ -622,12 +611,11 @@ public class StageManager
         // treat it as an expired activity stage instead of a permanent stage.
         if (!string.IsNullOrEmpty(stage) && Regex.IsMatch(stage, "^[A-Za-z]{2}-\\d{1,2}$"))
         {
-            return new StageInfo
-            {
-                Display = stage,
-                Value = stage,
-                Activity = new() { UtcStartTime = DateTime.MinValue, UtcExpireTime = DateTime.MinValue },
+            var expiredActivity = new StageActivityInfo {
+                UtcStartTime = DateTime.MinValue,
+                UtcExpireTime = DateTime.MinValue,
             };
+            return new StageInfo(stage, stage, null, expiredActivity);
         }
 
         // Fallback: treat as permanent stage
@@ -641,16 +629,11 @@ public class StageManager
 
     public void AddUnOpenStage(string stage)
     {
-        _stages.Add(stage, new()
-        {
-            Display = stage,
-            Value = stage,
-            Activity = new()
-            {
-                UtcStartTime = DateTime.MinValue,
-                UtcExpireTime = DateTime.MinValue,
-            },
-        });
+        var unopenActivity = new StageActivityInfo {
+            UtcStartTime = DateTime.MinValue,
+            UtcExpireTime = DateTime.MinValue,
+        };
+        _stages.Add(stage, new StageInfo(stage, stage, null, unopenActivity));
     }
 
     /// <summary>
@@ -697,13 +680,37 @@ public class StageManager
             // Side story Drop item tips
             if (!string.IsNullOrEmpty(stage.Drop))
             {
-                lines.Add($"{stage.Value}: {ItemListHelper.GetItemName(stage.Drop)}");
+                var str = $"{stage.Value}: {ItemListHelper.GetItemName(stage.Drop) ?? stage.Drop}";
+                var count = Instances.ToolboxViewModel?.DepotResult?.FirstOrDefault(d => d.Id == stage.Drop)?.DisplayCount;
+                if (!string.IsNullOrEmpty(count) && count != "-1")
+                {
+                    str += $" ({LocalizationHelper.GetString("Inventory")} {count})";
+                }
+
+                lines.Add(str);
             }
 
             // Normal stage tips
             if (!string.IsNullOrEmpty(stage.Tip))
             {
                 lines.Add(stage.Tip);
+            }
+
+            // Drop groups tips (for chip stages like PR-A-1/2)
+            if (stage.DropGroups != null && stage.DropGroups.Count > 0)
+            {
+                var groupTexts = new List<string>();
+                foreach (var dropGroup in stage.DropGroups)
+                {
+                    var itemCounts = dropGroup
+                        .Select(dropId => Instances.ToolboxViewModel?.DepotResult?.FirstOrDefault(d => d.Id == dropId)?.DisplayCount ?? "-1")
+                        .ToList();
+                    groupTexts.Add(string.Join(" & ", itemCounts));
+                }
+
+                string inventoryLabel = LocalizationHelper.GetString("Inventory");
+                string inventoryText = $" ({inventoryLabel} {string.Join(" / ", groupTexts)})";
+                lines.Add(inventoryText);
             }
         }
 
@@ -727,7 +734,7 @@ public class StageManager
     /// </summary>
     /// <param name="dayOfWeek">Day of week</param>
     /// <returns>Open stage list</returns>
-    public IEnumerable<CombinedData> GetStageList(DayOfWeek dayOfWeek)
+    public IEnumerable<StageInfo> GetStageList(DayOfWeek dayOfWeek)
     {
         return _stages.Values.Where(stage => !stage.IsHidden && stage.IsStageOpen(dayOfWeek));
     }
@@ -736,7 +743,7 @@ public class StageManager
     /// Gets all open or will open stage list
     /// </summary>
     /// <returns>Open or will open stage list</returns>
-    public IEnumerable<CombinedData> GetStageList()
+    public IEnumerable<StageInfo> GetStageList()
     {
         return _stages.Values.Where(stage => !stage.IsHidden && stage.IsStageOpenOrWillOpen());
     }

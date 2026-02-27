@@ -14,11 +14,13 @@
 
     <!--  背景颜色  -->
     <SolidColorBrush x:Key="RegionBrush" Color="#1C1C1C" />
+    <SolidColorBrush x:Key="RegionBrushOpacity10" Color="#191C1C1C" />
     <SolidColorBrush x:Key="RegionBrushOpacity25" Color="#401C1C1C" />
     <SolidColorBrush x:Key="RegionBrushOpacity50" Color="#7F1C1C1C" />
     <SolidColorBrush x:Key="RegionBrushOpacity75" Color="#BF1C1C1C" />
 
     <SolidColorBrush x:Key="MouseOverRegionBrush" Color="#2B2B30" />
+    <SolidColorBrush x:Key="MouseOverRegionBrushOpacity10" Color="#19303036" />
     <SolidColorBrush x:Key="MouseOverRegionBrushOpacity25" Color="#40303036" />
     <SolidColorBrush x:Key="MouseOverRegionBrushOpacity50" Color="#7F303036" />
     <SolidColorBrush x:Key="MouseOverRegionBrushOpacity75" Color="#BF303036" />
@@ -78,6 +80,10 @@
     <SolidColorBrush x:Key="RareOperatorLogBrush" Color="Orange" />
     <SolidColorBrush x:Key="RobotOperatorLogBrush" Color="Gray" />
 
+    <SolidColorBrush x:Key="TaskQueue.TaskStatus.InProgress" Color="#20326CF3" />
+    <SolidColorBrush x:Key="TaskQueue.TaskStatus.Completed" Color="#2090EE90" />
+    <SolidColorBrush x:Key="TaskQueue.TaskStatus.Error" Color="#20FF4444" />
+
     <SolidColorBrush x:Key="Star1OperatorLogBrush" Color="#E6E6E6" />
     <SolidColorBrush x:Key="Star1OperatorLogBrushPotentialFull" Color="#66E6E6E6" />
     <SolidColorBrush x:Key="Star2OperatorLogBrush" Color="#88BB44" />
@@ -86,8 +92,8 @@
     <SolidColorBrush x:Key="Star3OperatorLogBrushPotentialFull" Color="#6666CCFF" />
     <SolidColorBrush x:Key="Star4OperatorLogBrush" Color="#BB88FF" />
     <SolidColorBrush x:Key="Star4OperatorLogBrushPotentialFull" Color="#66BB88FF" />
-    <SolidColorBrush x:Key="Star5OperatorLogBrush" Color="#FFBB55" />
-    <SolidColorBrush x:Key="Star5OperatorLogBrushPotentialFull" Color="#66FFBB55" />
+    <SolidColorBrush x:Key="Star5OperatorLogBrush" Color="#EED694" />
+    <SolidColorBrush x:Key="Star5OperatorLogBrushPotentialFull" Color="#66EED694" />
     <SolidColorBrush x:Key="Star6OperatorLogBrush" Color="Orange" />
     <SolidColorBrush x:Key="Star6OperatorLogBrushPotentialFull" Color="#66FFA500" />
 

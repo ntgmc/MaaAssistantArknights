@@ -1,4 +1,10 @@
 {
+    "BattleQuickFormationModulePage": {
+        "text": ["Branch"]
+    },
+    "BattleQuickFormationSkillPage": {
+        "text": "Skill"
+    },
     "ClickChapter1": {
         "text": ["Hour of An Awakening", "Hour of An"]
     },
@@ -22,6 +28,13 @@
         "roi": [1163, 27, 84, 28],
         "text": ["Movements"]
     },
+    "EnterEpisodeNew": {
+        "baseTask": "#none",
+        "baseTaskDoc": "26.2.10 Add a secondary interface and delete it after subsequent updates",
+        "Doc": "base_task",
+        "template": "empty.png",
+        "action": "ClickSelf"
+    },
     "LevelOfDifficulty": {
         "text": ["Environment", "PRTS"]
     },
@@ -35,7 +48,7 @@
         "Doc": "该任务的 ocrReplace 被所有涉及干员名的英文识别任务复用 This task's ocrReplace is reused by all recognition tasks related to operator names",
         "ocrReplace": [
             [":", ""],
-            ["SilverAsh", "银灰"],
+            ["^SilverAsh$", "银灰"],
             ["^Blaze$", "煌"],
             ["Surtr", "史尔特尔"],
             ["^Ch'en$", "陈"],
@@ -80,12 +93,12 @@
             ["Reserve Operator *-* *M[elee]*", "预备干员-近战"],
             ["Angelina", "安洁莉娜"],
             ["Sora", "空"],
-            ["Ss?k?ad?i? the Co?rru?pt?ing ?[Heart]*", "浊心斯卡蒂"],
+            ["Skadi the Corrupting ?[Heart]*", "浊心斯卡蒂"],
             ["Scene", "稀音"],
             ["Suzuran", "铃兰"],
             ["Mayer", "梅尔"],
             ["Magallan", "麦哲伦"],
-            ["Pramanix", "初雪"],
+            ["^Pramanix$", "初雪"],
             ["Gnosis", "灵知"],
             ["Glaucus", "格劳克斯"],
             ["Shamare", "巫恋"],
@@ -101,7 +114,7 @@
             ["Ansel?", "安赛尔"],
             ["Myrrh", "末药"],
             ["^Gavial$", "嘉维尔"],
-            ["Perfumer", "调香师"],
+            ["^Perfumer$", "调香师"],
             ["Ptilopsis", "白面鸮"],
             ["^Silence$", "赫默"],
             ["Warfarin", "华法琳"],
@@ -238,7 +251,7 @@
             ["Robin", "罗宾"],
             ["Jaye", "孑"],
             ["Weedy", "温蒂"],
-            ["Phantom", "傀影"],
+            ["^Phantom$", "傀影"],
             ["Aak", "阿"],
             ["^Snowsant$", "雪雉"],
             ["Waai Fu", "槐琥"],
@@ -383,8 +396,8 @@
             ["Entitative Program Controller", "实体程式控制"],
             ["Reserve Operator *-* *D[efender]*", "预备干员-重装"],
             ["R-31a Heavy Power Armor", "R-31a重型动力装甲"],
-            ["Astgenne", "星源"],
-            ["(L? *ight *t* *n?[ifGg]?re?v?y *th?n?er?|Greyy the Lightningbe[arer]*)", "承曦格雷伊"],
+            ["^Astgenne$", "星源"],
+            ["(L? *ight *t* *n?[ifGg]?re?v?y *th?n?er?|Gre[vy][vy] the Lightningbe[arer]*)", "承曦格雷伊"],
             ["Dorothy", "多萝西"],
             ["R-31 Heavy Power Armor", "R-31重型动力装甲"],
             ["R-11 Assault Power Armor", "R-11突击动力装甲"],
@@ -769,7 +782,6 @@
             ["Shiny Berries", "闪亮果实"],
             ["Glooming Berry", "奇异黑光果实"],
             ["Shiny Brew", "缤纷果酒"],
-            ["'Treasure Chest'", "“宝箱”"],
             ["Vina Victoria", "维娜·维多利亚"],
             ["Catherine", "凯瑟琳"],
             ["Bobbing", "波卜"],
@@ -868,7 +880,7 @@
             ["Scoring Station", "大战记分站"],
             ["Gramophone Pedestal", "“留声机”底座"],
             ["Blaze the Igniting Spark", "烛煌"],
-            ["Yu", "余"],
+            ["^Yu$", "余"],
             ["Surfer", "寻澜"],
             ["Xingzhu", "行箸"],
             ["Stove", "火灶"],
@@ -926,8 +938,38 @@
             ["Blood's Whisper", "本能的召唤"],
             ["Tippi", "蒂比"],
             ["Tragodia", "酒神"],
-            ["Leizi the Thunderbringer", "司霆惊蛰"],
-            ["Record Keeper", "录武官"]
+            ["Leiz?i t?he Thunderbringer", "司霆惊蛰"],
+            ["Record Keeper", "录武官"],
+            ["Chamber of Treasures", "聚宝斋"],
+            ["Candle Stand", "明烛台"],
+            ["Flaw", "瑕"],
+            ["Strange Gourd", "怪葫芦"],
+            ["Iron Gourd", "铁葫芦"],
+            ["Magic Gourd", "宝葫芦"],
+            ["Statuegeist", "雕伥"],
+            ["Center", "桑特拉"],
+            ["Dive", "戴乌"],
+            ["Raidian", "电弧"],
+            ["Cycle", "赛柯"],
+            ["Artifact Center", "遗物中枢"],
+            ["Zero-Stress Helper", "压力归零帮手"],
+            ["Stress-Relief Helper", "压力舒缓帮手"],
+            ["Fate Striker", "天命来袭"],
+            ["Kichisei", "吉星"],
+            ["Matsukiri", "松桐"],
+            ["Haruka", "遥"],
+            ["'Zan'", "“斩”"],
+            ["Hoshiguma the Breacher", "斩业星熊"],
+            ["Life Support Monitor Addon", "维生监测配件"],
+            ["'Moonlight Cocoon'", "“月影之茧”"],
+            ["Microspike Addon", "微型尖刺配件"],
+            ["Mutsumi Wakaba", "若叶睦"],
+            ["Umiri Yahata", "八幡海铃"],
+            ["Sakiko Togawa", "丰川祥子"],
+            ["Counter Armor Set", "反制装甲套组"],
+            ["Uika Misumi", "三角初华"],
+            ["'Unwavering Assistant'", "“绝对助手”"],
+            ["Nyamu Y.?tenji", "祐天寺若麦"]
         ]
     },
     "GameStartCheckResourceOCR": {
@@ -1016,7 +1058,18 @@
         "text": ["Provisional", "Mining", "Permit"]
     },
     "OrundumActivities": {
-        "text": ["Lucky Strips", "Wishing", "Lucky", "Wall", "Bazaar", "Shrine", "Nurtury", "Wish", "Board"],
+        "text": [
+            "Lucky Strips",
+            "Wishing",
+            "Lucky",
+            "Wall",
+            "Bazaar",
+            "Shrine",
+            "Nurtury",
+            "Wish",
+            "Board",
+            "Enmusubi"
+        ],
         "roi": [67, 69, 115, 219]
     },
     "OrundumActivitiesChoose": {
@@ -1112,6 +1165,10 @@
     "UnlockClues": {
         "templThreshold": 0.85
     },
+    "SendClues": {
+        "doc": "Remove this after 'Quickly place clues' and 'One-tap send duplicate clues' features are added (#14966)",
+        "roi": [1160, 350, 80, 80]
+    },
     "InfrastTrainingIdle": {
         "text": ["Idle", "ldle"],
         "roi": [326, 637, 165, 41]
@@ -1183,7 +1240,7 @@
             ["Fight to the Death", "死斗"],
             ["The Grand Finale", "压轴登场"],
             ["Prisoners' Night", "死囚之夜"],
-            ["Justice", "正义"],
+            ["^Justice$", "正义"],
             ["Premiere", "首演"],
             ["Practical Test", "应用测试"],
             ["Ursus Desire", "乌萨斯的渴求"],
@@ -1215,7 +1272,7 @@
             ["Dangers Abound", "危机四伏"],
             ["Surprise Factory", "惊喜工厂"],
             ["Absurd Trickeries", "荒唐把戏"],
-            ["From Afar", "隔岸观火"],
+            ["^From Afar$", "隔岸观火"],
             ["Duck Lord's Play", "鸭爵的戏剧"],
             ["Duck Lord's Party", "鸭爵的宴会"],
             ["Gopnik's Fist", "高普尼克之拳"],
@@ -1258,7 +1315,7 @@
             ["Guns and Order", "铳与秩序"],
             ["Mechanical Menace", "机械之灾"],
             ["The Faithful's Utopia", "教徒居所"],
-            ["Out of Control", "失控"],
+            ["^Out of Control$", "失控"],
             ["The Piper's Call", "吹笛人的号召"],
             ["Ubi bona somnia", "好梦在何方"],
             ["Pool of Procreation", "育生池"],
@@ -1320,7 +1377,7 @@
             ["Harass With Strength", "恃强凌弱"],
             ["Manmade Carnival", "人造物狂欢节"],
             ["Beside The Battlefield", "战场侧面"],
-            ["Legacy", "继承"],
+            ["^Legacy$", "继承"],
             ["Safety Inspection", "安全检查"],
             ["Vermin", "公害"],
             ["Eye For an Eye", "以血还血"],
@@ -1392,7 +1449,75 @@
             ["Motorized Squad", "机动队"],
             ["Fate's Finale", "不容拒绝"],
             ["Dense Jungle", "丛林密布"],
-            ["Motorized Squad", "机动队"]
+            ["Silicon Geist's Banquet", "硅基伥的宴席"],
+            ["Biding Time", "以逸待劳"],
+            ["Feast of Fruit", "硕果累累"],
+            ["Calamitous Punishment", "劫罚"],
+            ["Duck and Yi", "易易鸭鸭"],
+            ["Totally Out of Control", "彻底失控"],
+            ["Reeducation", "循循善诱"],
+            ["Sparkling Shine", "闪闪发光"],
+            ["Steady Stream", "源源不断"],
+            ["Inner Rage", "愠怒"],
+            ["Breakthrough", "破局"],
+            ["Avarice", "贪妄"],
+            ["To Forget Oneself", "忘形"],
+            ["Ware-User", "凭器"],
+            ["Confusion", "迷惘"],
+            ["Garrison", "人镇"],
+            ["Inferno", "炎灼"],
+            ["Mangshan Town Records", "邙山镇地方志"],
+            ["A Humble Gift", "薄礼一份"],
+            ["Unreflecting", "不鉴"],
+            ["Departing Inspection", "离域检查"],
+            ["Beware the Shadows", "暗箭难防"],
+            ["Exemplary Service", "峥嵘战功"],
+            ["Take the Stage", "赶场戏班"],
+            ["Shanhaizhong Scramble", "山海必争"],
+            ["Return to Your Roots", "落叶归根"],
+            ["Cultured", "识文"],
+            ["Stopping the Advance", "长驱不复"],
+            ["Away, Hui!", "去晦"],
+            ["Feng Shui", "背山面水"],
+            ["Guardian of Justice", "所守者，义"],
+            ["Hook, Line, and Sinker", "啖之以利"],
+            ["Learning for All", "有教无类"],
+            ["Look Out Above", "飞来横祸"],
+            ["Veteran Actor", "老戏骨"],
+            ["Serious Business", "正经生意"],
+            ["To Market", "赶集"],
+            ["Against the Flood", "斥洪"],
+            ["To the Fall", "赴陨"],
+            ["Defying Quakes", "蔑震"],
+            ["Slandering Heaven", "谤天"],
+            ["Cliff of Geists", "为崖作伥"],
+            ["Sit Back and Watch", "作壁上观"],
+            ["Astral Projection", "神游天外"],
+            ["Whack-A-Mus", "狡鼷三窟"],
+            ["Muted Past", "往事喑哑"],
+            ["Heroes of Nanwu", "南武群英会"],
+            ["Green Hills Speak Not", "青山不语"],
+            ["The Sui Strategist", "谋岁者"],
+            ["The Suppression of Sui", "破岁阵祀"],
+            ["Seeking the Way", "求道"],
+            ["Enlightenment", "点化"],
+            ["Compassion, Justice, Valor", "仁·义·武"],
+            ["Memories of Dusk Beauty", "夕娥忆"],
+            ["Cold Moonlight", "月华寒"],
+            ["Strange Tales", "奇谭"],
+            ["Sugared Bait", "贪饵"],
+            ["The Four Difficulties", "地有四难"],
+            ["Unlit Sparks", "不成烟火"],
+            ["Of Hundred Forms", "生百相"],
+            ["Joy From Burdenbeast", "喜从驮来"],
+            ["Words Past Like Smoke", "昔字如烟"],
+            ["Bout by the Dusk River", "夕江对擂"],
+            ["Daylight Robbery", "明抢暗偷"],
+            ["Sword, Glaive, Spear", "剑·刀·矛"],
+            ["Amidst Thunder", "迎雷"],
+            ["Clarity", "分明"],
+            ["Frivolous Tunes", "靡靡之音"],
+            ["Return to Your Roots", "落叶归根"]
         ]
     },
     "BattleQuickFormationClear": {
@@ -1410,11 +1535,8 @@
         "text": ["All"]
     },
     "BattleQuickFormationOCR": {
-        "rectMove": [0, 231, 116, 22],
+        "rectMove": [0, 234, 116, 22],
         "specialParams": [105, 2, 7, 0, 3, 10]
-    },
-    "BattleQuickFormationModulePage": {
-        "text": ["Branch"]
     },
     "BattleStartPre": {
         "text": ["Start", "Start Challenge"]
@@ -1467,7 +1589,7 @@
     },
     "OperBoxNameOCR": {
         "rectMove_doc": "for overwidth",
-        "rectMove": [0, 265, 128, 22],
+        "rectMove": [0, 264, 133, 24],
         "specialParams": [160, 4, 0, 0, 3, 10]
     },
     "SSSBegin": {
@@ -1497,7 +1619,6 @@
             ["Arts Resonant Energy Field", "法术调和能量场"],
             ["Security Talent Agreement", "保全人才合作协议"],
             ["Royal Academy of Sciences[ Telescope]*", "皇家科学院望远镜"],
-            ["Security Talent Agreement", "保全人才合作协议"],
             ["Cloudstepper", "攀云机"],
             ["Pinnacle Insights? Port", "尖端研究成果共享终端"],
             ["Lightweight Range[finder]*", "轻型瞄准测距仪"],

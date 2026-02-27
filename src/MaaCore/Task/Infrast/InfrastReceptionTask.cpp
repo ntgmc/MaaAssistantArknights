@@ -6,9 +6,11 @@
 #include "Controller/Controller.h"
 #include "Task/ProcessTask.h"
 #include "Utils/Logger.hpp"
+#include "Utils/StringMisc.hpp"
 #include "Vision/Infrast/InfrastClueVacancyImageAnalyzer.h"
 #include "Vision/Matcher.h"
 #include "Vision/MultiMatcher.h"
+#include "Vision/RegionOCRer.h"
 
 bool asst::InfrastReceptionTask::_run()
 {
@@ -35,9 +37,14 @@ bool asst::InfrastReceptionTask::_run()
         return false;
     }
 
-    use_clue();
-    back_to_reception_main();
-    send_clue();
+    if (m_enable_clue_exchange) {
+        use_clue();
+        back_to_reception_main();
+    }
+
+    if (m_send_clue) {
+        send_clue();
+    }
 
     if (need_exit()) {
         return false;
@@ -50,8 +57,10 @@ bool asst::InfrastReceptionTask::_run()
         return false;
     }
 
-    use_clue();
-    back_to_reception_main();
+    if (m_enable_clue_exchange) {
+        use_clue();
+        back_to_reception_main();
+    }
 
     if (need_exit()) {
         return false;
@@ -63,6 +72,16 @@ bool asst::InfrastReceptionTask::_run()
 
     Log.info("skip shift in rotation mode");
     return true;
+}
+
+bool asst::InfrastReceptionTask::on_run_fails()
+{
+    if (asst::InfrastAbstractTask::on_run_fails()) {
+        return true;
+    }
+
+    ProcessTask(*this, { "CloseSendClue", "Stop" }).run();
+    return asst::InfrastAbstractTask::on_run_fails();
 }
 
 bool asst::InfrastReceptionTask::receive_message_board()
@@ -149,13 +168,31 @@ bool asst::InfrastReceptionTask::proc_clue_vacancy()
 
     cv::Mat image = ctrler()->get_image();
 
-    // 优先检测官服新增的“快捷置入”按钮，如果存在则点击一次执行批量置入，跳过逐个置入流程
-    const auto quick_insert_task = Task.get("InfrastClueQuickInsert");
-    Matcher quick_insert_matcher(image);
-    quick_insert_matcher.set_task_info(quick_insert_task);
-    if (quick_insert_matcher.analyze()) {
-        ctrler()->click(quick_insert_matcher.get_result().rect);
-        return true;
+    // 优先检测官服新增的“快捷置入”按钮，如果存在则尝试根据数字与空位一致时批量置入
+    if (ProcessTask(*this, { "InfrastClueQuickInsert" }).set_retry_times(3).run()) {
+        InfrastClueVacancyImageAnalyzer vacancy_analyzer(image);
+        vacancy_analyzer.set_to_be_analyzed(clue_suffix);
+        vacancy_analyzer.analyze();
+        const int vacancy_cnt = static_cast<int>(vacancy_analyzer.get_vacancy().size());
+
+        const auto confirm_task = Task.get("InfrastClueQuickInsertConfirm");
+        if (vacancy_cnt > 0 && confirm_task != nullptr) {
+            RegionOCRer ocr_analyzer(image);
+            ocr_analyzer.set_task_info(confirm_task);
+
+            if (auto ocr_res = ocr_analyzer.analyze()) {
+                int available = 0;
+                if (utils::chars_to_number(ocr_res->text, available)) {
+                    Log.info("vacancy_cnt:", vacancy_cnt, ", available:", available);
+                    if (available == vacancy_cnt) {
+                        Rect click_rect = confirm_task->roi.move(confirm_task->rect_move);
+                        ctrler()->click(click_rect);
+                    }
+                }
+            }
+
+            return true;
+        }
     }
 
     for (const std::string& clue : clue_suffix) {
@@ -203,8 +240,7 @@ bool asst::InfrastReceptionTask::unlock_clue_exchange()
 bool asst::InfrastReceptionTask::back_to_reception_main()
 {
     ProcessTask(*this, { "EndOfClueExchange" }).set_retry_times(0).run();
-    // 国服有快捷置入后不会进入线索放置页面，不需要返回，多点一次快捷置入也无所谓
-    return ProcessTask(*this, { "InfrastClueQuickInsert", "BackToReceptionMain" }).run();
+    return ProcessTask(*this, { "BackToReceptionMain" }).run();
 }
 
 bool asst::InfrastReceptionTask::send_clue()

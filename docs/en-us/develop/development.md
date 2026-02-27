@@ -15,7 +15,7 @@ You can [Ask DeepWiki](https://deepwiki.com/MaaAssistantArknights/MaaAssistantAr
 
 ## I don't know programming but just want to modify some JSON files/documents, how can I do it?
 
-Welcome to the [Web-based PR Tutorial](./pr-tutorial.md) that anyone can understand (purely web-based on Github.com)
+Welcome to the [Web-based PR Tutorial](./pr-tutorial.md) that anyone can understand (purely web-based on GitHub.com)
 
 ## I want to make simple modifications to a few lines of code, but configuring the environment is too tedious and pure web editing is difficult to use. What should I do?
 
@@ -58,32 +58,44 @@ We've preset several different development environments for you to choose from:
    ```
 
 5. Configure development environment
+   - Download and install `CMake`
    - Download and install `Visual Studio 2026 Community`, selecting `Desktop development with C++` and `.NET Desktop Development` during installation.
 
-6. Double-click `MAA.sln` to open the project in Visual Studio.
-7. Configure Visual Studio settings
-   - Select `RelWithDebInfo` and `x64` in the top configuration bar (Skip for Release builds or ARM platforms)
-   - Right-click `MaaWpfGui` → Properties → Debug → Enable native debugging (This enables breakpoints in C++ Core)
+6. Execute cmake project configuration
 
-8. Now you're ready to happily ~~mess around~~ start developing!
-9. Commit regularly with meaningful messages during development  
-   If you're not familiar with git usage, you might want to create a new branch for changes instead of committing directly to `dev`:
-
-   ```bash
-   git branch your_own_branch
-   git checkout your_own_branch
+   ```cmd
+   cmake --preset windows-x64
    ```
 
-   This keeps your changes isolated from upstream `dev` updates.
+7. Double-click `build/MAA.slnx` to open the project in Visual Studio.
+8. Configure Visual Studio settings
+   - Select `Debug` and `x64` in the top configuration bar
+   - Right-click `MaaWpfGui` - Set as Startup Project
+   - Press F5 to run
 
-10. After development, push your local branch (e.g. `dev`) to your remote repository:
+   ::: tip
+   To debug Win32Controller (Windows window control) features, you need to manually download the corresponding platform package from [MaaFramework Releases](https://github.com/MaaXYZ/MaaFramework/releases), and place `MaaWin32ControlUnit.dll` from the `bin` directory into MAA's DLL directory (e.g. `build/bin/Debug`). PRs for an auto-download script are welcome!
+   :::
+
+9. Now you're ready to happily ~~mess around~~ start developing!
+10. Commit regularly with meaningful messages during development  
+    If you're not familiar with git usage, you might want to create a new branch for changes instead of committing directly to `dev`:
+
+    ```bash
+    git branch your_own_branch
+    git checkout your_own_branch
+    ```
+
+    This keeps your changes isolated from upstream `dev` updates.
+
+11. After development, push your local branch (e.g. `dev`) to your remote repository:
 
     ```bash
     git push origin dev
     ```
 
-11. Submit a Pull Request at the [MAA main repository](https://github.com/MaaAssistantArknights/MaaAssistantArknights). Ensure your changes are based on the `dev` branch, not `master`.
-12. To sync upstream changes:
+12. Submit a Pull Request at the [MAA main repository](https://github.com/MaaAssistantArknights/MaaAssistantArknights). Ensure your changes are based on the `dev` branch, not `master`.
+13. To sync upstream changes:
     1. Add upstream repository:
 
        ```bash
@@ -108,11 +120,67 @@ We've preset several different development environments for you to choose from:
        git merge # merge
        ```
 
-    4. Repeat steps 7, 8, 9, 10.
+    4. Repeat steps 8, 9, 10, 11.
 
 ::: tip
 After opening Visual Studio, Git operations can be performed using VS's built-in "Git Changes" instead of command-line tools.
 :::
+
+## Using VS Code for Development (Optional)
+
+::: warning
+**Visual Studio is the recommended IDE for development.** The MAA project is primarily built around Visual Studio, and the complete environment setup described above covers all development needs with the best out-of-the-box experience. The VS Code workflow is provided only as an alternative for developers already familiar with VS Code + CMake + clangd, and requires more configuration effort.
+:::
+
+If you prefer VS Code, you can use CMake, clangd, and related extensions for code completion, navigation, and debugging. After completing steps 1–6 above (clone, dependencies, CMake configuration), follow these steps:
+
+### Recommended Extensions
+
+Install from the VS Code marketplace:
+
+| Extension                                                                                           | Purpose                                                    |
+| --------------------------------------------------------------------------------------------------- | ---------------------------------------------------------- |
+| [CMake Tools](https://marketplace.visualstudio.com/items?itemName=ms-vscode.cmake-tools)            | CMake configure, build, and debug integration              |
+| [clangd](https://marketplace.visualstudio.com/items?itemName=llvm-vs-code-extensions.vscode-clangd) | C++ IntelliSense, code navigation, diagnostics (LSP-based) |
+| [C/C++](https://marketplace.visualstudio.com/items?itemName=ms-vscode.cpptools)                     | Debug C++ programs (works with CMake Tools or launch.json) |
+
+::: tip
+When using clangd, set `C_Cpp.intelliSenseEngine` to `disabled` to avoid conflicts with the C/C++ extension's IntelliSense.
+:::
+
+### Setup Steps
+
+1. Open the project root folder in VS Code
+2. **CMake Tools**:
+   - Select a Configure Preset from the status bar (e.g. `windows-x64`, `linux-x64`)
+   - Select a Build Preset and run configure/build
+3. **clangd**: On Linux/macOS, presets enable `CMAKE_EXPORT_COMPILE_COMMANDS` and clangd uses `build/compile_commands.json` automatically. On Windows, clangd's code completion and navigation requires generating `compile_commands.json` first:
+
+   ::: warning clangd Setup on Windows
+   - In **VS Installer**, check **C++ Clang compiler for Windows** (clang-cl)
+   - Switch to the `windows-x64-clang` preset and run Configure once to generate `compile_commands.json` in `build/`, then clangd will work
+   - **This preset uses clang-cl instead of MSVC and cannot produce valid build artifacts**; switch back to `windows-x64` for actual builds
+   - clangd analyzes based on clang-cl; some code (e.g. MSVC-specific extensions) may show errors. These can be ignored and do not affect MSVC compilation
+
+   **Command-line preset switching example** (run from project root):
+
+   ```cmd
+   rem Generate compile_commands.json (Configure only, no build)
+   cmake --preset windows-x64-clang
+
+   rem Switch back to MSVC for actual build
+   cmake --preset windows-x64
+   cmake --build --preset windows-x64-RelWithDebInfo
+   ```
+
+   :::
+
+4. **Debugging**: The project includes `.vscode/launch.json` for launching MaaWpfGui or Debug Demo
+
+### Build and Debug Shortcuts
+
+- **Build**: `Ctrl+Shift+B` or via CMake Tools status bar
+- **Debug**: F5 or choose a configuration from the Run and Debug panel
 
 ## MAA File Formatting Requirements
 
@@ -125,7 +193,7 @@ The currently enabled formatting tools are as follows:
 | File Type | Format Tool                                                     |
 | --------- | --------------------------------------------------------------- |
 | C++       | [clang-format](https://clang.llvm.org/docs/ClangFormat.html)    |
-| Json/Yaml | [Prettier](https://prettier.io/)                                |
+| JSON/YAML | [Prettier](https://prettier.io/)                                |
 | Markdown  | [markdownlint](https://github.com/DavidAnson/markdownlint-cli2) |
 
 ### Use Pre-commit Hooks to Automatically Format Code

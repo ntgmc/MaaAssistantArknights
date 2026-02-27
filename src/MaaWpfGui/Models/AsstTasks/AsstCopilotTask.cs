@@ -91,7 +91,7 @@ public class AsstCopilotTask : AsstBaseTask
 
         if (!string.IsNullOrEmpty(FileName) && MultiTasks.Count > 0)
         {
-            throw new ArgumentException("FileName和MultiTasks不能同时使用");
+            throw new ArgumentException("FileName 和 MultiTasks 不能同时使用");
         }
         else if (MultiTasks.Count > 0)
         {
@@ -103,7 +103,7 @@ public class AsstCopilotTask : AsstBaseTask
         }
         else
         {
-            throw new ArgumentException("FileName和MultiTasks必须使用其一");
+            throw new ArgumentException("FileName 和 MultiTasks 必须使用其一");
         }
 
         if (FormationIndex > 0)
@@ -158,11 +158,5 @@ public class AsstCopilotTask : AsstBaseTask
         /// </summary>
         [JsonProperty("is_raid")]
         public bool IsRaid { get; set; }
-
-        /// <summary>
-        /// Gets or sets a value indicating whether 悖论模拟
-        /// </summary>
-        [JsonProperty("is_paradox")]
-        public bool IsParadox { get; set; }
     }
 }

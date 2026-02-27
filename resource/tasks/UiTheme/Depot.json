@@ -19,8 +19,10 @@
             "DepotDreamland",
             "DepotJieGarden",
             "DepotAveMujica",
-            "DepotTogether"
-        ]
+            "DepotTogether",
+            "DepotLoneTrail"
+        ],
+        "onErrorNext": ["Depot-Entry@SwitchTheme@ToggleSettingsMenu"]
     },
     "DepotDefault": {
         "action": "ClickSelf",
@@ -64,7 +66,7 @@
     },
     "DepotDreamland": {
         "baseTask": "DepotDefault",
-        "template": ["Dreamland/DreamlandDefault/DepotEnter.png", "Dreamland/DreamlandDark/DepotEnter.png"]
+        "template": ["Dreamland/Day/DepotEnter.png", "Dreamland/Night/DepotEnter.png"]
     },
     "DepotJieGarden": {
         "baseTask": "DepotDefault",
@@ -77,5 +79,9 @@
     "DepotTogether": {
         "baseTask": "DepotDefault",
         "template": "Together/DepotEnter.png"
+    },
+    "DepotLoneTrail": {
+        "baseTask": "DepotDefault",
+        "template": ["LoneTrail/Day/DepotEnter.png", "LoneTrail/Night/DepotEnter.png"]
     }
 }

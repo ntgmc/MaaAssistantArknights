@@ -55,6 +55,10 @@ internal static partial class MaaService
     internal static unsafe partial bool AsstConnect(AsstHandle handle, byte* adbPath, byte* address, byte* config);
 
     [LibraryImport("MaaCore.dll")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    internal static partial bool AsstAttachWindow(AsstHandle handle, IntPtr hwnd, ulong screencapMethod, ulong mouseMethod, ulong keyboardMethod);
+
+    [LibraryImport("MaaCore.dll")]
     internal static unsafe partial AsstTaskId AsstAppendTask(AsstHandle handle, byte* type, byte* taskParams);
 
     [LibraryImport("MaaCore.dll")]
@@ -110,7 +114,7 @@ public enum AsstTaskType : byte
     CloseDown,
 
     /// <summary>
-    /// 刷理智
+    /// 理智作战
     /// </summary>
     Fight,
 
@@ -150,14 +154,21 @@ public enum AsstTaskType : byte
     SSSCopilot,
 
     /// <summary>
+    /// 自动战斗-悖论模拟
+    /// </summary>
+    ParadoxCopilot,
+
+    /// <summary>
     /// 单步任务（目前仅支持战斗）
     /// </summary>
     SingleStep,
 
+    /*
     /// <summary>
     /// 视频识别
     /// </summary>
     VideoRecognition,
+    */
 
     /// <summary>
     /// 仓库识别

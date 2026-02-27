@@ -4,18 +4,6 @@ on:
   push:
     tags:
       - "v*"
-    branches-ignore:
-      - "master"
-    paths:
-      - ".github/workflows/ci.yml"
-      - "3rdparty/include/**"
-      - "cmake/**"
-      - "CMakeLists.txt"
-      - "include/**"
-      - "src/**"
-      - "tools/maadeps-download.py"
-      - "!**/*.md"
-  pull_request:
     branches:
       - "dev"
     paths:
@@ -23,6 +11,18 @@ on:
       - "3rdparty/include/**"
       - "cmake/**"
       - "CMakeLists.txt"
+      - "CMakePresets.json"
+      - "include/**"
+      - "src/**"
+      - "tools/maadeps-download.py"
+      - "!**/*.md"
+  pull_request:
+    paths:
+      - ".github/workflows/ci.yml"
+      - "3rdparty/include/**"
+      - "cmake/**"
+      - "CMakeLists.txt"
+      - "CMakePresets.json"
       - "include/**"
       - "src/**"
       - "tools/maadeps-download.py"
@@ -30,7 +30,7 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}-${{ github.ref == 'refs/heads/dev' && github.sha }}
+  group: ${{ github.workflow }}-${{ github.event.pull_request.head.repo.full_name || github.repository }}-${{ github.head_ref || github.ref_name }}${{ github.ref == 'refs/heads/dev' && format('-{0}', github.sha) || '' }}
   cancel-in-progress: true
 
 jobs:
@@ -41,6 +41,10 @@ jobs:
       tag: ${{ steps.set_tag.outputs.tag }}
       prerelease: ${{ steps.set_pre.outputs.prerelease }}
     steps:
+      - name: Show concurrency group
+        run: |
+          echo "Concurrency Group: ${{ github.workflow }}-${{ github.event.pull_request.head.repo.full_name || github.repository }}-${{ github.head_ref || github.ref_name }}${{ github.ref == 'refs/heads/dev' && format('-{0}', github.sha) || '' }}"
+
       - name: Checkout repository
         uses: actions/checkout@v6
         with:
@@ -126,19 +130,26 @@ jobs:
         run: |
           python3 tools/maadeps-download.py ${{ matrix.arch }}-windows
 
-      - name: Config cmake
+      - name: Configure, build and install
         run: |
-          mkdir -p build
-          cmake -B build ${{ matrix.arch == 'arm64' && '-A ARM64' }} -DCMAKE_BUILD_TYPE=RelWithDebInfo -DMAADEPS_TRIPLET='maa-${{ matrix.arch }}-windows' -DINSTALL_RESOURCE=ON -DINSTALL_PYTHON=ON -DMAA_HASH_VERSION='${{ needs.meta.outputs.tag }}' -DBUILD_WPF_GUI=OFF
+          cmake -B build --preset ${{ matrix.arch == 'arm64' && 'windows-publish-arm64' || 'windows-publish-x64' }} -DMAA_HASH_VERSION='${{ needs.meta.outputs.tag }}'
+          cmake --build --preset ${{ matrix.arch == 'arm64' && 'windows-publish-arm64' || 'windows-publish-x64' }} --parallel $env:NUMBER_OF_PROCESSORS
+          cmake --install build --config RelWithDebInfo
 
-      - name: Build
-        run: |
-          cmake --build build --config RelWithDebInfo --parallel $env:NUMBER_OF_PROCESSORS
+      - name: Download MaaFramework
+        if: matrix.arch == 'x64'
+        uses: robinraju/release-downloader@v1
+        with:
+          repository: MaaXYZ/MaaFramework
+          latest: true
+          fileName: '*win-x86_64*.zip'
+          extract: true
+          out-file-path: MaaFramework-temp
 
-      - name: Install
+      - name: Copy MaaWin32ControlUnit
+        if: matrix.arch == 'x64'
         run: |
-          mkdir -p install
-          cmake --install build --prefix install --config RelWithDebInfo
+          cp MaaFramework-temp/bin/*Win32ControlUnit* install/
 
       - name: Cache .nuke/temp, ~/.nuget/packages
         id: cache-nuget
@@ -245,27 +256,13 @@ jobs:
         run: |
           python3 tools/maadeps-download.py ${{ matrix.arch == 'x86_64' && 'x64' || 'arm64' }}-linux
 
-      - name: Config cmake
+      - name: Configure, build and install
         run: |
-          mkdir -p build
-          cmake -B build \
-            -DCMAKE_BUILD_TYPE=RelWithDebInfo \
-            -DMAADEPS_TRIPLET='maa-${{ matrix.arch == 'x86_64' && 'x64' || 'arm64' }}-linux' \
-            -DINSTALL_RESOURCE=ON \
-            -DINSTALL_PYTHON=ON \
-            -DMAA_HASH_VERSION='${{ needs.meta.outputs.tag }}' \
-            -DCMAKE_TOOLCHAIN_FILE=src/MaaUtils/MaaDeps/cmake/maa-${{ matrix.arch == 'x86_64' && 'x64' || 'arm64' }}-linux-toolchain.cmake
-
-      - name: Build
-        run: |
-          cmake --build build --config RelWithDebInfo --parallel $(nproc)
+          cmake --preset ${{ matrix.arch == 'x86_64' && 'linux-publish-x64' || 'linux-publish-arm64' }} -DMAA_HASH_VERSION='${{ needs.meta.outputs.tag }}'
+          cmake --build --preset ${{ matrix.arch == 'x86_64' && 'linux-publish-x64' || 'linux-publish-arm64' }} --parallel $(nproc)
+          cmake --install build --config RelWithDebInfo
         env:
           CLICOLOR_FORCE: 1
-
-      - name: Install
-        run: |
-          mkdir -p install
-          cmake --install build --prefix install --config RelWithDebInfo
 
       - name: Setup cross compile toolchains for CLI
         uses: ./src/maa-cli/.github/actions/setup
@@ -274,10 +271,10 @@ jobs:
 
       - name: Build CLI
         run: |
-          cargo build --release --locked --package maa-cli --features vendored-openssl
+          cargo build --release --locked --package maa-cli --features git2/vendored-openssl
           cp -v target/$CARGO_BUILD_TARGET/release/maa $GITHUB_WORKSPACE/install/maa
           cargo build --release --locked --package maa-cli --no-default-features \
-            --features git2,vendored-openssl
+            --features git2,git2/vendored-openssl
           cp -v target/$CARGO_BUILD_TARGET/release/maa $GITHUB_WORKSPACE/appimage-maa
         working-directory: src/maa-cli
 
@@ -368,20 +365,11 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Config cmake
+      - name: Configure, build and install
         run: |
-          cmake -B build -GNinja \
-            -DCMAKE_BUILD_TYPE=RelWithDebInfo \
-            -DCMAKE_OSX_ARCHITECTURES='${{ matrix.arch }}' \
-            -DMAA_HASH_VERSION='${{ needs.meta.outputs.tag }}'
-
-      - name: Build
-        run: |
-          cmake --build build --config RelWithDebInfo --parallel $(sysctl -n hw.logicalcpu)
-
-      - name: Install
-        run: |
-          cmake --install build --prefix install --config RelWithDebInfo
+          cmake -B build --preset ${{ matrix.arch == 'x86_64' && 'macos-publish-x64' || 'macos-publish-arm64' }} -DMAA_HASH_VERSION='${{ needs.meta.outputs.tag }}'
+          cmake --build --preset ${{ matrix.arch == 'x86_64' && 'macos-publish-x64' || 'macos-publish-arm64' }} --parallel $(sysctl -n hw.logicalcpu)
+          cmake --install build --config RelWithDebInfo
 
       - name: Upload MAA to GitHub
         uses: actions/upload-artifact@v6

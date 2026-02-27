@@ -35,6 +35,7 @@ asst::FightTask::FightTask(const AsstCallback& callback, Assistant* inst) :
         .set_times_limit("EndOfAction", 0)
         .set_retry_times(5);
 
+    m_stage_navigation_task_ptr->set_fight_task_ptr(m_fight_task_ptr);
     m_stage_navigation_task_ptr->set_enable(false).set_retry_times(0);
     m_sidestory_reopen_task_ptr->set_enable(false).set_retry_times(0);
 
@@ -71,13 +72,7 @@ bool asst::FightTask::set_params(const json::value& params)
     const int series = params.get("series", 1);
 
     m_fight_times_prt->set_fight_times(times);
-    if (series == 1000) {
-        Log.error("================  DEPRECATED  ================");
-        Log.error("series = 1000, 已弃用");
-        Log.error("================  DEPRECATED  ================");
-        return false;
-    } // v5.16.0
-    else if (series < -1 || series > 6) {
+    if (series < -1 || series > 6) {
         Log.error("Invalid series");
         return false;
     }
@@ -87,8 +82,9 @@ bool asst::FightTask::set_params(const json::value& params)
     }
 
     bool enable_penguin = params.get("report_to_penguin", false);
-    bool enable_yituliu = params.get("report_to_yituliu", false);
     std::string penguin_id = params.get("penguin_id", "");
+    bool enable_yituliu = params.get("report_to_yituliu", false);
+    std::string yituliu_id = params.get("yituliu_id", "");
     std::string server = params.get("server", "CN");
     std::string client_type = params.get("client_type", std::string());
     bool is_dr_grandet = params.get("DrGrandet", false);
@@ -145,6 +141,7 @@ bool asst::FightTask::set_params(const json::value& params)
     m_stage_drops_plugin_ptr->set_enable_penguin(enable_penguin);
     m_stage_drops_plugin_ptr->set_penguin_id(penguin_id);
     m_stage_drops_plugin_ptr->set_enable_yituliu(enable_yituliu);
+    m_stage_drops_plugin_ptr->set_yituliu_id(penguin_id);
 
     m_sidestory_reopen_task_ptr->set_medicine(medicine);
     m_sidestory_reopen_task_ptr->set_expiring_medicine(expiring_medicine);

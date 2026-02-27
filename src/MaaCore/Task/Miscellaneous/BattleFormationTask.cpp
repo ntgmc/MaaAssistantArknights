@@ -1,6 +1,7 @@
 #include "BattleFormationTask.h"
 
 #include <ranges>
+#include <set>
 
 #include "Config/GeneralConfig.h"
 #include "Config/Miscellaneous/BattleDataConfig.h"
@@ -11,9 +12,19 @@
 #include "MaaUtils/ImageIo.h"
 #include "Task/ProcessTask.h"
 #include "Utils/Logger.hpp"
+#include "Vision/Matcher.h"
 #include "Vision/Miscellaneous/OperNameAnalyzer.h"
 #include "Vision/MultiMatcher.h"
 #include "Vision/RegionOCRer.h"
+
+asst::BattleFormationTask::BattleFormationTask(
+    const AsstCallback& callback,
+    Assistant* inst,
+    std::string_view task_chain) :
+    AbstractTask(callback, inst, task_chain),
+    m_quick_formation_ui(callback, inst, task_chain)
+{
+}
 
 bool asst::BattleFormationTask::set_specific_support_unit(const std::string& name)
 {
@@ -107,7 +118,7 @@ bool asst::BattleFormationTask::_run()
         const auto& missing_group = missing_groups.begin(); // 只有一个缺失干员组，直接取第一个
         for (const battle::OperUsage& oper :
              missing_group->second | std::views::filter([&](const battle::OperUsage& oper) {
-                 return oper.status == battle::OperStatus::Missing;
+                 return oper.status == battle::OperStatus::Missing || oper.status == battle::OperStatus::Unavailable;
              })) {
             // 如果指定助战干员正好可以补齐编队，则只招募指定助战干员就好了，记得再次确认一下 skill
             // 如果编队里正好有【艾雅法拉 - 2】和 【艾雅法拉 - 3】呢？
@@ -150,7 +161,7 @@ bool asst::BattleFormationTask::_run()
     // 对于有在干员组中存在的自定干员，无法提前得知是否成功编入，故不提前加入编队
     if (!m_user_additional.empty()) {
         std::unordered_map<battle::Role, std::vector<OperGroup>> user_formation; // 解析后用户自定编队
-        auto limit = 12 - (int)m_opers_in_formation->size();
+        auto limit = 12 + m_used_support_unit - (int)m_opers_in_formation->size();
         for (const auto& [name, skill] : m_user_additional) {
             if (m_opers_in_formation->contains(name)) {
                 continue;
@@ -366,7 +377,7 @@ bool asst::BattleFormationTask::add_trust_operators()
     }
 
     // 需要追加的信赖干员数量
-    int append_count = 12 - (int)m_opers_in_formation->size();
+    int append_count = 12 + m_used_support_unit - (int)m_opers_in_formation->size();
     if (append_count == 0) {
         return true;
     }
@@ -475,7 +486,6 @@ std::vector<asst::BattleFormationTask::QuickFormationOper>
 {
     const auto& ocr_replace = Task.get<OcrTaskInfo>("CharsNameOcrReplace");
     std::vector<asst::BattleFormationTask::QuickFormationOper> opers_result;
-    cv::Mat select;
     for (int i = 0; i < 8; ++i) {
         std::string task_name = "BattleQuickFormation-OperNameFlag" + std::to_string(i);
 
@@ -485,7 +495,8 @@ std::vector<asst::BattleFormationTask::QuickFormationOper>
         if (!multi.analyze()) [[unlikely]] {
             continue;
         }
-        for (const auto& flag : multi.get_result()) {
+        const auto& multi_result = multi.get_result();
+        for (const auto& flag : multi_result) {
             OperNameAnalyzer region(image);
             region.set_task_info(ocr_task);
             region.set_roi(flag.rect.move(ocr_task->rect_move));
@@ -507,6 +518,7 @@ std::vector<asst::BattleFormationTask::QuickFormationOper>
             res.score = ocr_result.score;
             res.flag_rect = flag.rect;
             res.flag_score = flag.score;
+            res.role = Roles[i];
 
             constexpr int kMinDistance = 5;
             auto find_it =
@@ -517,9 +529,12 @@ std::vector<asst::BattleFormationTask::QuickFormationOper>
             if (find_it != opers_result.end() || res.text.empty()) {
                 continue;
             }
-            select = make_roi(image, res.flag_rect.move({ 0, -10, 5, 4 }));
-            cv::inRange(select, cv::Scalar(200, 140, 0), cv::Scalar(255, 180, 100), select);
-            res.is_selected = cv::hasNonZero(select);
+
+            // 判断是否已被选中
+            cv::Mat selected_image = make_roi(image, res.flag_rect.move({ 0, -10, 5, 4 }));
+            cv::inRange(selected_image, cv::Scalar(200, 140, 0), cv::Scalar(255, 180, 100), selected_image);
+            res.is_selected = cv::hasNonZero(selected_image);
+
             opers_result.emplace_back(std::move(res));
         }
     }
@@ -540,13 +555,8 @@ bool asst::BattleFormationTask::enter_selection_page(const cv::Mat& img)
 
 bool asst::BattleFormationTask::select_opers_in_cur_page(const std::vector<OperGroup*>& groups)
 {
-    const auto& opers_result = analyzer_opers(ctrler()->get_image());
-
-    static const std::array<Rect, 3> SkillRectArray = {
-        Task.get("BattleQuickFormationSkill1")->specific_rect,
-        Task.get("BattleQuickFormationSkill2")->specific_rect,
-        Task.get("BattleQuickFormationSkill3")->specific_rect,
-    };
+    const auto& image = ctrler()->get_image();
+    const auto& opers_result = analyzer_opers(image);
 
     if (!opers_result.empty()) {
         if (m_last_oper_name == opers_result.back().text) {
@@ -579,18 +589,26 @@ bool asst::BattleFormationTask::select_opers_in_cur_page(const std::vector<OperG
             continue;
         }
         else if (!oper) {
-            Log.error(__FUNCTION__, "| Oper was founded, but pointer is null");
+            LogError << __FUNCTION__ << "| Oper was founded, but pointer is null";
+            continue;
         }
 
+        if (!check_oper_level(image, res.flag_rect, *oper, m_ignore_requirements)) {
+            // 继续检查同组其他干员
+            oper->status = battle::OperStatus::Unavailable;
+            continue;
+        }
         ctrler()->click(res.flag_rect);
         sleep(delay);
-        if (1 <= oper->skill && oper->skill <= 3) {
-            if (oper->skill == 3) {
-                ProcessTask(*this, { "BattleQuickFormationSkill-SwipeToTheDown" }).run();
-            }
-            ctrler()->click(SkillRectArray.at(oper->skill - 1ULL));
+        ret = ProcessTask(*this, { "BattleQuickFormationSkillPage" }).run(); // 矢量突破S2不会自动重置回技能页
+        if (!check_and_select_skill(*oper, m_ignore_requirements, delay)) {
+            ctrler()->click(res.flag_rect);                                  // 选择技能失败时反选干员
             sleep(delay);
+            // 继续检查同组其他干员
+            oper->status = battle::OperStatus::Unavailable;
+            continue;
         }
+
         if (oper->requirements.module >= 0 && oper->requirements.module <= 4) {
             ret = ProcessTask(*this, { "BattleQuickFormationModulePage" }).run();
             ret =
@@ -629,6 +647,89 @@ bool asst::BattleFormationTask::select_opers_in_cur_page(const std::vector<OperG
         oper = nullptr; // reset oper pointer
     }
 
+    return true;
+}
+
+bool asst::BattleFormationTask::check_oper_level(
+    const cv::Mat& image,
+    asst::Rect flag,
+    const battle::OperUsage& oper,
+    bool ignore)
+{
+    if (oper.requirements.elite == 0 && oper.requirements.level == 0) {
+        return true; // 无等级要求
+    }
+    auto [_elite, _level] = m_quick_formation_ui.analyze_oper_level(image, flag);
+    if (_elite == -1 || _level == -1) {
+        LogWarn << __FUNCTION__ << "| Cannot recognize oper" << oper.name << "level info, reset to 0,0";
+        _elite = 0;
+        _level = 0;
+    }
+
+    if (_elite < oper.requirements.elite) {
+        LogWarn << __FUNCTION__ << "| Elite" << _elite << ", require:" << oper.requirements.elite;
+        json::value info = basic_info_with_what("BattleFormationOperUnavailable");
+        info["details"]["oper_name"] = oper.name;
+        info["details"]["requirement_type"] = "elite";
+        callback(AsstMsg::SubTaskExtraInfo, info);
+        return false;
+    }
+
+    if (_elite == oper.requirements.elite && _level < oper.requirements.level) {
+        LogWarn << __FUNCTION__ << "| Elite" << _elite << "level" << _level << ", require:" << oper.requirements.elite
+                << oper.requirements.level;
+        json::value info = basic_info_with_what("BattleFormationOperUnavailable");
+        info["details"]["oper_name"] = oper.name;
+        info["details"]["requirement_type"] = "level";
+        callback(AsstMsg::SubTaskExtraInfo, info);
+        if (!ignore) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool asst::BattleFormationTask::check_and_select_skill(const battle::OperUsage& oper, bool ignore, int delay)
+{
+    if (oper.skill < 1 || oper.skill > 3) {
+        return true;
+    }
+
+    /* 外服技能描述过长, 无法盲点
+    static const std::array<Rect, 3> SkillRectArray = {
+        Task.get("BattleQuickFormationSkill1")->specific_rect,
+        Task.get("BattleQuickFormationSkill2")->specific_rect,
+        Task.get("BattleQuickFormationSkill3")->specific_rect,
+    };
+
+    if (level_required <= 0 || level_required > 10) { // skill level 不需要检查
+        if (skill == 3) {
+            ProcessTask(*this, { "BattleQuickFormationSkill-SwipeToTheDown" }).run();
+        }
+        ctrler()->click(SkillRectArray.at(skill - 1ULL));
+        sleep(delay);
+        return true;
+    }*/
+
+    auto result = m_quick_formation_ui.find_oper_skill(oper.skill, oper.requirements.skill_level == 0);
+    if (!result) {
+        LogError << __FUNCTION__ << "| Skill" << oper.skill << "not found in quick detection";
+        return false;
+    }
+    if (result->level < oper.requirements.skill_level) {
+        LogWarn << __FUNCTION__ << "| Skill" << oper.skill << "level" << result->level
+                << ", require:" << oper.requirements.skill_level;
+        json::value info = basic_info_with_what("BattleFormationOperUnavailable");
+        info["details"]["oper_name"] = oper.name;
+        info["details"]["requirement_type"] = "skill_level";
+        callback(AsstMsg::SubTaskExtraInfo, info);
+        if (!ignore) {
+            return false;
+        }
+    }
+
+    ctrler()->click(result->rect);
+    sleep(delay);
     return true;
 }
 
@@ -787,7 +888,9 @@ std::optional<std::string> asst::BattleFormationTask::add_support_unit(
     LogTraceFunction;
 
     // 通过点击编队界面右上角 <助战单位> 文字左边的 Icon 进入助战干员选择界面
-    ProcessTask(*this, { "Formation-AddSupportUnit-EnterSupportList" }).run();
+    if (!ProcessTask(*this, { "Formation-AddSupportUnit-EnterSupportList" }).set_retry_times(20).run()) {
+        return std::nullopt;
+    }
 
     SupportList support_list(m_callback, m_inst, m_task_chain);
 

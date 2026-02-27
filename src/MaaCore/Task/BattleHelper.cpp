@@ -16,6 +16,7 @@
 #include "Vision/Battle/BattlefieldClassifier.h"
 #include "Vision/Battle/BattlefieldMatcher.h"
 #include "Vision/Matcher.h"
+#include "Vision/Miscellaneous/OperNameAnalyzer.h"
 #include "Vision/MultiMatcher.h"
 #include "Vision/RegionOCRer.h"
 #include <ranges>
@@ -74,6 +75,7 @@ bool asst::BattleHelper::calc_tiles_info(const std::string& stage_name, double s
     m_side_tile_info = std::move(calc_result.side_tile_info);
     m_retreat_button_pos = calc_result.retreat_button;
     m_skill_button_pos = calc_result.skill_button;
+    m_has_multi_stages = calc_result.has_multi_stages;
 
     return true;
 }
@@ -335,7 +337,8 @@ bool asst::BattleHelper::update_deployment(bool init, const cv::Mat& reusable, b
 }
 
 // if side = true, get top view of the selected operator, tile size is 5x5
-cv::Mat asst::BattleHelper::get_top_view(const cv::Mat& cam_img, bool side)
+// has_multi_stages: does map have multi stages, e.g. TN-1 ~ TN-4
+cv::Mat asst::BattleHelper::get_top_view(const cv::Mat& cam_img, bool side, bool has_multi_stages)
 {
     if (!side) {
         return cv::Mat {}; // TODO
@@ -355,7 +358,7 @@ cv::Mat asst::BattleHelper::get_top_view(const cv::Mat& cam_img, bool side)
     };
     std::vector<cv::Point2f> screen_points;
     for (const auto& point : world_points) {
-        cv::Vec3d temp { point.x, -point.y, -0.3967874050140381 };
+        cv::Vec3d temp { point.x + (has_multi_stages ? m_map_data.view[0].x : 0), -point.y, Map::TileCalc2::rel_pos_z };
         auto screen_pt = Map::TileCalc2::world_to_screen(m_map_data, temp, true);
         screen_points.push_back(screen_pt);
     }
@@ -528,14 +531,13 @@ bool asst::BattleHelper::retreat_oper(const Point& loc, bool manually)
     if (manually) {
         std::erase_if(m_battlefield_opers, [&loc](const auto& pair) -> bool { return pair.second == loc; });
     }
+    cancel_oper_selection(); // 兜底一下, 防止格子上面并没有干员, 导致点到隔壁格子
     return true;
 }
 
 bool asst::BattleHelper::is_skill_ready(const Point& loc, const cv::Mat& reusable)
 {
     cv::Mat image = reusable.empty() ? m_inst_helper.ctrler()->get_image() : reusable;
-    BattlefieldClassifier skill_analyzer(image);
-    skill_analyzer.set_object_of_interest({ .skill_ready = true });
 
     auto target_iter = m_normal_tile_info.find(loc);
     if (target_iter == m_normal_tile_info.end()) {
@@ -543,6 +545,12 @@ bool asst::BattleHelper::is_skill_ready(const Point& loc, const cv::Mat& reusabl
         return false;
     }
     const Point& battlefield_point = target_iter->second.pos;
+    static const Rect screen_rect = { 0, 0, WindowWidthDefault, WindowHeightDefault };
+    if (!screen_rect.include(battlefield_point)) {
+        return false;
+    }
+    BattlefieldClassifier skill_analyzer(image);
+    skill_analyzer.set_object_of_interest({ .skill_ready = true });
     skill_analyzer.set_base_point(battlefield_point);
 
     return skill_analyzer.analyze()->skill_ready.ready;
@@ -750,7 +758,7 @@ void asst::BattleHelper::save_map(const cv::Mat& image)
 
     // 清理旧的 PNG 文件
     static bool clean_png = true;
-    if (clean_png) {
+    if (clean_png && std::filesystem::exists(MapRelativeDir)) {
         for (const auto& entry : std::filesystem::directory_iterator(MapRelativeDir)) {
             if (entry.path().extension() == ".png") {
                 std::error_code ec;
@@ -871,7 +879,7 @@ bool asst::BattleHelper::click_skill(bool keep_waiting)
         if (keep_waiting && retry > 0 && (retry % 10 == 0) && !check_in_battle(image)) {
             return false;
         }
-        top_view = get_top_view(image, true);
+        top_view = get_top_view(image, true, m_has_multi_stages);
         Matcher skill_analyzer { top_view };
         skill_analyzer.set_task_info("BattleSkillReadyOnClick-TopView");
         skill_analyzer.set_roi({ 250, 250, 250, 250 });
@@ -993,8 +1001,16 @@ std::string asst::BattleHelper::analyze_detail_page_oper_name(const cv::Mat& ima
     const auto& replace_task = Task.get<OcrTaskInfo>("CharsNameOcrReplace");
     const auto& task = Task.get<OcrTaskInfo>(oper_name_ocr_task_name());
 
-    RegionOCRer preproc_analyzer(image);
+    // 使用 OperNameAnalyzer 处理左对齐文本
+    OperNameAnalyzer preproc_analyzer(image);
     preproc_analyzer.set_task_info(task);
+    preproc_analyzer.set_text_alignment(OperNameAnalyzer::TextAlignment::Left); // 左对齐
+    const auto& params = task->special_params;
+    preproc_analyzer.set_bin_threshold(params[0]);
+    preproc_analyzer.set_bin_expansion(params[1]);
+    preproc_analyzer.set_bin_trim_threshold(params[2], params[3]);
+    preproc_analyzer.set_bottom_line_height(params[4]);
+    preproc_analyzer.set_width_threshold(params[5]);
     preproc_analyzer.set_replace(replace_task->replace_map, replace_task->replace_full);
     auto preproc_result_opt = preproc_analyzer.analyze();
 
@@ -1013,7 +1029,12 @@ std::string asst::BattleHelper::analyze_detail_page_oper_name(const cv::Mat& ima
     sort_by_score_(*det_result_opt);
     const auto& det_name = det_result_opt->front().text;
 
-    return BattleData.is_name_invalid(det_name) ? std::string() : det_name;
+    if (!BattleData.is_name_invalid(det_name)) {
+        return det_name;
+    }
+
+    det_analyzer.save_img(utils::path("debug") / utils::path("battle"));
+    return std::string();
 }
 
 std::optional<asst::Rect> asst::BattleHelper::get_oper_rect_on_deployment(const std::string& name) const

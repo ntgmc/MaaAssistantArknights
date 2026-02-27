@@ -177,7 +177,12 @@
     "JieGarden@Roguelike@CoppersAnalyzer-ExchangeNameOCR": {
         "Doc": "通宝名称识别 - EXCHANGE 模式 - 通宝已投出识别用 roi 为 通宝类型 的 Rect.move(me.roi)",
         "baseTask": "JieGarden@Roguelike@CoppersNameOcrReplace",
-        "roi": [29, -5, 160, 40]
+        "roi": [29, -5, 240, 40]
+    },
+    "JieGarden@Roguelike@CoppersAnalyzer-LeftNameOCR": {
+        "Doc": "通宝名称识别 - 左侧列专用OCR - EXCHANGE 模式",
+        "baseTask": "JieGarden@Roguelike@CoppersNameOcrReplace",
+        "roi": [29, -5, 170, 40]
     },
     "JieGarden@Roguelike@CoppersAnalyzer-LeftType": {
         "Doc": "通宝类型识别 - 左侧新拾取通宝区域 (EXCHANGE 模式)",
@@ -192,7 +197,7 @@
     "JieGarden@Roguelike@CoppersAnalyzer-PickupNameOCR": {
         "Doc": "通宝名称识别 - PICKUP 模式 - 通宝已投出识别用 roi 为 通宝类型 的 Rect.move(me.roi)",
         "baseTask": "JieGarden@Roguelike@CoppersNameOcrReplace",
-        "roi": [0, -209, 167, 37]
+        "roi": [-29, -209, 218, 37]
     },
     "JieGarden@Roguelike@CoppersAnalyzer-RightType": {
         "Doc": "通宝类型识别 - 最右侧列区域",
@@ -363,7 +368,7 @@
         "next": ["JieGarden@Roguelike@CoppersRecastResult", "#self"]
     },
     "JieGarden@Roguelike@CoppersRecastResult": {
-        "Doc": "点击投钱结果界面的对号",
+        "Doc": "点击投钱结果界面的对号 有时延迟时间比较长会失败 目前依赖retry_times有20次兜底",
         "action": "ClickSelf",
         "template": "JieGarden@Roguelike@StageEncounterDrawCopperResult.png",
         "postDelay": 500,
@@ -654,13 +659,21 @@
         "baseTask": "JieGarden@Roguelike@MissionFailedFlag",
         "template": "JieGarden@Roguelike@MissionFailedFlag.png",
         "action": "ClickSelf",
+        "reduceOtherTimes": ["JieGarden@Roguelike@OperationFailedReCheck*20"],
         "next": [
             "JieGarden@Roguelike@OperationFailed@NextAfterLoadingIcon",
             "JieGarden@Roguelike@OperationFailed@NextAfterLoadingText",
             "JieGarden@Roguelike@OperationFailed",
             "JieGarden@Roguelike@NextLevel",
-            "JieGarden@Roguelike@NextLevel#next"
+            "JieGarden@Roguelike@NextLevel#next",
+            "JieGarden@Roguelike@OperationFailedReCheck"
         ]
+    },
+    "JieGarden@Roguelike@OperationFailedReCheck": {
+        "algorithm": "JustReturn",
+        "postDelay": 5000,
+        "maxTimes": 20,
+        "next": ["JieGarden@Roguelike@OperationFailed#next"]
     },
     "JieGarden@Roguelike@RandomPick": {
         "action": "ClickSelf",
@@ -791,7 +804,7 @@
         "baseTask": "JieGarden@Roguelike@StageEnter",
         "next": ["JieGarden@Roguelike@StageBoskyPassageEnter", "JieGarden@Roguelike@StageEncounterJudgeClick"]
     },
-    "JieGarden@Roguelike@StageCombatDps": {
+    "JieGarden@Roguelike@StageCombatOps": {
         "Doc": "普通战斗 紫色系",
         "method": "HSVCount",
         "colorWithClose": false,
@@ -807,17 +820,17 @@
         ],
         "postDelay": 600,
         "next": [
-            "JieGarden@Roguelike@StageCombatDpsEnter",
-            "JieGarden@Roguelike@StageEmergencyDpsEnter",
+            "JieGarden@Roguelike@StageCombatOpsEnter",
+            "JieGarden@Roguelike@StageEmergencyOpsEnter",
             "JieGarden@Roguelike@Stages#next"
         ]
     },
-    "JieGarden@Roguelike@StageCombatDpsEnter": {
+    "JieGarden@Roguelike@StageCombatOpsEnter": {
         "roi": [1046, 461, 222, 197]
     },
     "JieGarden@Roguelike@StageCombatOpsEnterThenLeave": {
-        "baseTask": "JieGarden@Roguelike@StageCombatDpsEnter",
-        "template": "JieGarden@Roguelike@StageCombatDpsEnter.png",
+        "baseTask": "JieGarden@Roguelike@StageCombatOpsEnter",
+        "template": "JieGarden@Roguelike@StageCombatOpsEnter.png",
         "next": ["JieGarden@Roguelike@StageCombatOpsStartActionThenLeave"]
     },
     "JieGarden@Roguelike@StageCombatOpsStartActionThenLeave": {
@@ -885,8 +898,8 @@
         "next": [
             "JieGarden@Roguelike@StageDreadfulFoe-5Enter",
             "JieGarden@Roguelike@StageDreadfulFoeEnter",
-            "JieGarden@Roguelike@StageEmergencyDpsEnter",
-            "JieGarden@Roguelike@StageCombatDpsEnter",
+            "JieGarden@Roguelike@StageEmergencyOpsEnter",
+            "JieGarden@Roguelike@StageCombatOpsEnter",
             "JieGarden@Roguelike@Stages#next"
         ]
     },
@@ -909,7 +922,7 @@
             ]
         ]
     },
-    "JieGarden@Roguelike@StageEmergencyDps": {
+    "JieGarden@Roguelike@StageEmergencyOps": {
         "Doc": "困难战斗 红色系",
         "method": "HSVCount",
         "colorWithClose": false,
@@ -929,12 +942,12 @@
         ],
         "postDelay": 600,
         "next": [
-            "JieGarden@Roguelike@StageCombatDpsEnter",
-            "JieGarden@Roguelike@StageEmergencyDpsEnter",
+            "JieGarden@Roguelike@StageCombatOpsEnter",
+            "JieGarden@Roguelike@StageEmergencyOpsEnter",
             "JieGarden@Roguelike@Stages#next"
         ]
     },
-    "JieGarden@Roguelike@StageEmergencyDpsEnter": {},
+    "JieGarden@Roguelike@StageEmergencyOpsEnter": {},
     "JieGarden@Roguelike@StageEmergencyTransportation": {
         "Doc": "先行一步，拒绝可以获取2希望 青色系",
         "baseTask": "JieGarden@Roguelike@Stage",
@@ -976,8 +989,8 @@
         "next": [
             "JieGarden@Roguelike@StageEncounterOptions#next",
             "JieGarden@Roguelike@StageEncounterSpecialClose",
-            "JieGarden@Roguelike@StageCombatDpsEnter",
-            "JieGarden@Roguelike@StageEmergencyDpsEnter",
+            "JieGarden@Roguelike@StageCombatOpsEnter",
+            "JieGarden@Roguelike@StageEmergencyOpsEnter",
             "JieGarden@Roguelike@ClickToDrops"
         ]
     },
@@ -1003,8 +1016,8 @@
             "JieGarden@Roguelike@StageEncounterDrawCopperResult",
             "JieGarden@Roguelike@ChooseOperFlag",
             "JieGarden@Roguelike@CoppersTakeFlag",
-            "JieGarden@Roguelike@StageEmergencyDpsEnter",
-            "JieGarden@Roguelike@StageCombatDpsEnter",
+            "JieGarden@Roguelike@StageEmergencyOpsEnter",
+            "JieGarden@Roguelike@StageCombatOpsEnter",
             "JieGarden@Roguelike@CloseEvent",
             "JieGarden@Roguelike@StageEncounterOptionUnknown"
         ]
@@ -1159,8 +1172,8 @@
             "JieGarden@Roguelike@CloseCollectionClose",
             "JieGarden@Roguelike@StageBoskyPassage",
             "JieGarden@Roguelike@StageGuidance",
-            "JieGarden@Roguelike@StageEmergencyDps",
-            "JieGarden@Roguelike@StageCombatDps",
+            "JieGarden@Roguelike@StageEmergencyOps",
+            "JieGarden@Roguelike@StageCombatOps",
             "JieGarden@Roguelike@StageSafeHouse",
             "JieGarden@Roguelike@StageBoons",
             "JieGarden@Roguelike@StageTrader",
@@ -1203,8 +1216,8 @@
             "JieGarden@Roguelike@StageEncounter",
             "JieGarden@Roguelike@StageWindAndRain",
             "JieGarden@Roguelike@StageConfrontation",
-            "JieGarden@Roguelike@StageCombatDps",
-            "JieGarden@Roguelike@StageEmergencyDps",
+            "JieGarden@Roguelike@StageCombatOps",
+            "JieGarden@Roguelike@StageEmergencyOps",
             "JieGarden@Roguelike@StageDreadfulFoe",
             "JieGarden@Roguelike@StageDreadfulFoe-5"
         ],
@@ -1237,7 +1250,7 @@
             "JieGarden@Roguelike@CloseCollectionClose",
             "JieGarden@Roguelike@StageBoskyPassage",
             "JieGarden@Roguelike@StageGuidance",
-            "JieGarden@Roguelike@StageCombatDps",
+            "JieGarden@Roguelike@StageCombatOps",
             "JieGarden@Roguelike@StageSafeHouse",
             "JieGarden@Roguelike@StageBoons",
             "JieGarden@Roguelike@StageEncounter",
@@ -1246,7 +1259,7 @@
             "JieGarden@Roguelike@StageProphecy",
             "JieGarden@Roguelike@StageWindAndRain",
             "JieGarden@Roguelike@StageEmergencyTransportation",
-            "JieGarden@Roguelike@StageEmergencyDps",
+            "JieGarden@Roguelike@StageEmergencyOps",
             "JieGarden@Roguelike@StageDreadfulFoe",
             "JieGarden@Roguelike@StageDreadfulFoe-5"
         ],
@@ -1258,6 +1271,9 @@
     "JieGarden@Roguelike@StartExplore-EnterCheck": {
         "template": "JieGarden@Roguelike@StartExplore.png",
         "roi": [1014, 481, 266, 219]
+    },
+    "JieGarden@Roguelike@StartExploreWithSeed-Open": {
+        "roi": [870, 567, 95, 33]
     },
     "JieGarden@Roguelike@StrategyChange_mode0": {
         "text": ["_default", "_boskyPassageDefault"],

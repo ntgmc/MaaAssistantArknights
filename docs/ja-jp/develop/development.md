@@ -64,32 +64,44 @@ icon: iconoir:developer
    ```
 
 5. 開発環境の設定
+   - `CMake` をダウンロードしてインストール
    - `Visual Studio 2026 Community` をインストール時、`C++ によるデスクトップ開発` と `.NET デスクトップ開発` を選択必須
 
-6. `MAA.sln` をダブルクリックで開き、Visual Studio にプロジェクトを自動ロード
-7. VS の設定
-   - 上部設定バーで `RelWithDebInfo` `x64` を選択（Release ビルド/ARM プラットフォームの場合は不要）
-   - `MaaWpfGui` 右クリック → プロパティ → デバッグ → ネイティブデバッグを有効化（C++ Core へのブレークポイント設定可能）
+6. cmake プロジェクト設定を実行
 
-8. これで自由に ~~改造~~ 開発を始められます
-9. 一定量の変更ごにコミット（メッセージ記入必須）  
-   Git 未経験者は dev ブランチ直接変更ではなく新規ブランチ作成推奨：
-
-   ```bash
-   git branch your_own_branch
-   git checkout your_own_branch
+   ```cmd
+   cmake --preset windows-x64
    ```
 
-   これで dev の更新影響を受けずに開発可能
+7. `build/MAA.slnx` をダブルクリックで開き、Visual Studio にプロジェクトを自動ロード
+8. VS の設定
+   - 上部設定バーで `Debug` `x64` を選択
+   - `MaaWpfGui` 右クリック → スタートアップ プロジェクトに設定
+   - F5 キーを押して実行
 
-10. 開発完了後、変更をリモートリポジトリへプッシュ：
+   ::: tip
+   Win32Controller（Windows ウィンドウ制御）関連機能をデバッグする場合は、[MaaFramework Releases](https://github.com/MaaXYZ/MaaFramework/releases) から対応プラットフォームのアーカイブをダウンロードし、`bin` ディレクトリ内の `MaaWin32ControlUnit.dll` を MAA の DLL と同じディレクトリ（例：`build/bin/Debug`）に配置してください。自動ダウンロードスクリプトの PR 歓迎！
+   :::
+
+9. これで自由に ~~改造~~ 開発を始められます
+10. 一定量の変更ごとにコミット（メッセージ記入必須）  
+    Git 未経験者は dev ブランチ直接変更ではなく新規ブランチ作成推奨：
+
+    ```bash
+    git branch your_own_branch
+    git checkout your_own_branch
+    ```
+
+    これで dev の更新影響を受けずに開発可能
+
+11. 開発完了後、変更をリモートリポジトリへプッシュ：
 
     ```bash
     git push origin dev
     ```
 
-11. [MAA メインリポジトリ](https://github.com/MaaAssistantArknights/MaaAssistantArknights) で Pull Request を提出（master ではなく dev ブランチを指定）
-12. 上流リポジトリの更新を同期する場合：
+12. [MAA メインリポジトリ](https://github.com/MaaAssistantArknights/MaaAssistantArknights) で Pull Request を提出（master ではなく dev ブランチを指定）
+13. 上流リポジトリの更新を同期する場合：
     1. 上流リポジトリを追加：
 
        ```bash
@@ -114,11 +126,65 @@ icon: iconoir:developer
        git merge
        ```
 
-    4. ステップ7、8、9、10 を繰り返し
+    4. ステップ8、9、10、11 を繰り返し
 
 ::: tip
 Visual Studio 起動後、Git 操作は「Git 変更」画面からコマンドライン不要で可能
 :::
+
+## VSCodeでの開発（オプション）
+
+::: warning
+**Visual Studio での開発を推奨します。** MAA プロジェクトは主に Visual Studio をベースに構築されており、上記の完全な環境セットアップですべての開発ニーズをカバーし、すぐに使える最高の体験を提供します。VSCode ワークフローは、VSCode + CMake + clangd に精通した開発者向けの代替手段としてのみ提供されており、設定のハードルが比較的高くなります。
+:::
+
+VSCodeを好む場合、CMake、clangdなどの拡張機能でコード補完、ナビゲーション、デバッグが可能です。前述の手順1～6（クローン、依存関係、CMake設定）を完了した後、以下の手順で設定できます。
+
+### 推奨拡張機能
+
+VS Code Marketplace からインストール：
+
+| 拡張機能                                                                                            | 用途                                                              |
+| --------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
+| [CMake Tools](https://marketplace.visualstudio.com/items?itemName=ms-vscode.cmake-tools)            | CMake の設定、ビルド、デバッグ統合                                |
+| [clangd](https://marketplace.visualstudio.com/items?itemName=llvm-vs-code-extensions.vscode-clangd) | C++ インテリセンス、コードナビゲーション、診断（LSPベース）       |
+| [C/C++](https://marketplace.visualstudio.com/items?itemName=ms-vscode.cpptools)                     | C++ プログラムのデバッグ（CMake Tools または launch.json と連携） |
+
+::: tip
+clangd を使用する場合、C/C++ 拡張機能の IntelliSense を無効化（`C_Cpp.intelliSenseEngine` を `disabled` に設定）することを推奨します。競合を避けるためです。
+:::
+
+### 設定手順
+
+1. VS Code でプロジェクトルートを開く
+2. **CMake Tools**：ステータスバーで Configure Preset（例：`windows-x64`、`linux-x64`）を選択し、Build Preset でビルドを実行
+3. **clangd**：Linux/macOS ではプリセットで `CMAKE_EXPORT_COMPILE_COMMANDS` が有効となり、clangd は `build/compile_commands.json` を自動使用。Windows で clangd の補完・ナビゲーションを使う場合は、まず `compile_commands.json` を生成する必要があります：
+
+   ::: warning Windows での clangd 設定
+   - VS Installer で **C++ Clang コンパイラ for Windows**（clang-cl）をインストールに含める
+   - `windows-x64-clang` プリセットに切り替えて Configure を1回実行すると `build/` に `compile_commands.json` が生成され、clangd が利用可能になります
+   - **このプリセットは clang-cl を使用するため MSVC と異なり、ビルド成果物を直接生成できません**。実際のビルド時は `windows-x64` に切り替えてください
+   - clangd は clang-cl のコンパイル情報で解析するため、一部コード（MSVC 専用拡張など）でエラー表示が出る場合がありますが、無視して問題ありません。実際の MSVC ビルドには影響しません
+
+   **コマンドラインでのプリセット切り替え例**（プロジェクトルートで実行）：
+
+   ```cmd
+   rem compile_commands.json を生成（Configure のみ、ビルドなし）
+   cmake --preset windows-x64-clang
+
+   rem MSVC に戻して実際のビルドを行う
+   cmake --preset windows-x64
+   cmake --build --preset windows-x64-RelWithDebInfo
+   ```
+
+   :::
+
+4. **デバッグ**：プロジェクトには `.vscode/launch.json` が含まれており、MaaWpfGui や Debug Demo の起動が可能
+
+### ビルドとデバッグのショートカット
+
+- **ビルド**：`Ctrl+Shift+B` または CMake Tools ステータスバー
+- **デバッグ**：F5 または Run and Debug パネルで設定を選択
 
 ## MAAのファイルフォーマット要件
 
@@ -131,7 +197,7 @@ MAAは、リポジトリ内のコードとリソースファイルが美しく�
 | ファイルタイプ | フォーマットツール                                              |
 | -------------- | --------------------------------------------------------------- |
 | C++            | [clang-format](https://clang.llvm.org/docs/ClangFormat.html)    |
-| Json/Yaml      | [Prettier](https://prettier.io/)                                |
+| JSON/YAML      | [Prettier](https://prettier.io/)                                |
 | Markdown       | [markdownlint](https://github.com/DavidAnson/markdownlint-cli2) |
 
 ### Pre-commit Hooksを使用してコードを自動フォーマット

@@ -19,8 +19,10 @@
             "InfrastDreamland",
             "InfrastJieGarden",
             "InfrastAveMujica",
-            "InfrastTogether"
-        ]
+            "InfrastTogether",
+            "InfrastLoneTrail"
+        ],
+        "onErrorNext": ["Infrast-Entry@SwitchTheme@ToggleSettingsMenu"]
     },
     "InfrastDefault": {
         "action": "ClickSelf",
@@ -64,7 +66,7 @@
     },
     "InfrastDreamland": {
         "baseTask": "InfrastDefault",
-        "template": ["Dreamland/DreamlandDefault/EnterInfrast.png", "Dreamland/DreamlandDark/EnterInfrast.png"]
+        "template": ["Dreamland/Day/EnterInfrast.png", "Dreamland/Night/EnterInfrast.png"]
     },
     "InfrastJieGarden": {
         "baseTask": "InfrastDefault",
@@ -77,5 +79,9 @@
     "InfrastTogether": {
         "baseTask": "InfrastDefault",
         "template": "Together/EnterInfrast.png"
+    },
+    "InfrastLoneTrail": {
+        "baseTask": "InfrastDefault",
+        "template": ["LoneTrail/Day/EnterInfrast.png", "LoneTrail/Night/EnterInfrast.png"]
     }
 }

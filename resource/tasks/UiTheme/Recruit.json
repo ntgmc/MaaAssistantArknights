@@ -19,8 +19,10 @@
             "RecruitDreamland",
             "RecruitJieGarden",
             "RecruitAveMujica",
-            "RecruitTogether"
-        ]
+            "RecruitTogether",
+            "RecruitLoneTrail"
+        ],
+        "onErrorNext": ["Recruit-Entry@SwitchTheme@ToggleSettingsMenu"]
     },
     "RecruitDefault": {
         "action": "ClickSelf",
@@ -64,7 +66,7 @@
     },
     "RecruitDreamland": {
         "baseTask": "RecruitDefault",
-        "template": ["Dreamland/DreamlandDefault/Recruit.png", "Dreamland/DreamlandDark/Recruit.png"]
+        "template": ["Dreamland/Day/Recruit.png", "Dreamland/Night/Recruit.png"]
     },
     "RecruitJieGarden": {
         "baseTask": "RecruitDefault",
@@ -77,5 +79,9 @@
     "RecruitTogether": {
         "baseTask": "RecruitDefault",
         "template": "Together/Recruit.png"
+    },
+    "RecruitLoneTrail": {
+        "baseTask": "RecruitDefault",
+        "template": ["LoneTrail/Day/Recruit.png", "LoneTrail/Night/Recruit.png"]
     }
 }

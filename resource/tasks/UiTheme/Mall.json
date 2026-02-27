@@ -19,8 +19,10 @@
             "MallDreamland",
             "MallJieGarden",
             "MallAveMujica",
-            "MallTogether"
-        ]
+            "MallTogether",
+            "MallLoneTrail"
+        ],
+        "onErrorNext": ["Mall-Entry@SwitchTheme@ToggleSettingsMenu"]
     },
     "MallDefault": {
         "action": "ClickSelf",
@@ -64,7 +66,7 @@
     },
     "MallDreamland": {
         "baseTask": "MallDefault",
-        "template": ["Dreamland/DreamlandDefault/Mall.png", "Dreamland/DreamlandDark/Mall.png"]
+        "template": ["Dreamland/Day/Mall.png", "Dreamland/Night/Mall.png"]
     },
     "MallJieGarden": {
         "baseTask": "MallDefault",
@@ -77,5 +79,9 @@
     "MallTogether": {
         "baseTask": "MallDefault",
         "template": "Together/Mall.png"
+    },
+    "MallLoneTrail": {
+        "baseTask": "MallDefault",
+        "template": ["LoneTrail/Day/Mall.png", "LoneTrail/Night/Mall.png"]
     }
 }

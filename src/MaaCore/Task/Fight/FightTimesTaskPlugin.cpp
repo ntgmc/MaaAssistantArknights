@@ -111,12 +111,13 @@ bool asst::FightTimesTaskPlugin::_run()
     m_series_current = *series;
     fight["details"]["series"] = *series;
     fight["details"]["sanity_cost"] = *sanity_cost;
-    callback(AsstMsg::SubTaskExtraInfo, fight);
 
     if (m_fight_times + *series > m_fight_times_max) {
         m_task_ptr->set_enable(false); // 战斗次数超过上限
         Log.info(__FUNCTION__, "fight times reached max");
+        fight["details"]["finished"] = true;
     }
+    callback(AsstMsg::SubTaskExtraInfo, fight);
     return true;
 }
 
@@ -160,7 +161,7 @@ std::optional<int> asst::FightTimesTaskPlugin::change_series(int sanity_current,
     }
 
     auto ret = select_series(true);
-    if (!ret && m_is_medicine_exhausted) { // 药品用完, 且没有次数可用, 刷理智结束
+    if (!ret && m_is_medicine_exhausted) { // 药品用完, 且没有次数可用, 理智作战结束
         m_task_ptr->set_enable(false);
     }
     else if (!ret) {

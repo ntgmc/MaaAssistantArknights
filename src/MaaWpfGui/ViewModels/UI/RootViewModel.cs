@@ -38,7 +38,7 @@ public class RootViewModel : Conductor<Screen>.Collection.OneActive
     protected override void OnViewLoaded()
     {
         // 更新直接重启
-        if (Instances.VersionUpdateViewModel.CheckAndUpdateNow())
+        if (Instances.VersionUpdateDialogViewModel.CheckAndUpdateNow())
         {
             Bootstrapper.RestartAfterUpdate();
             return;
@@ -52,26 +52,25 @@ public class RootViewModel : Conductor<Screen>.Collection.OneActive
             MessageBoxHelper.Show(LocalizationHelper.GetString("NightlyWarning"));
         }
 
-        Task.Run(async () =>
-        {
-            await Instances.AnnouncementViewModel.CheckAndDownloadAnnouncement();
-            if (Instances.AnnouncementViewModel.DoNotRemindThisAnnouncementAgain)
+        Task.Run(async () => {
+            await Instances.AnnouncementDialogViewModel.CheckAndDownloadAnnouncement();
+            if (Instances.AnnouncementDialogViewModel.DoNotRemindThisAnnouncementAgain)
             {
                 return;
             }
 
-            if (Instances.AnnouncementViewModel.DoNotShowAnnouncement)
+            if (Instances.AnnouncementDialogViewModel.DoNotShowAnnouncement)
             {
                 return;
             }
 
-            if (Instances.AnnouncementViewModel.AnnouncementInfo != string.Empty)
+            if (Instances.AnnouncementDialogViewModel.AnnouncementInfo != string.Empty)
             {
-                _ = Execute.OnUIThreadAsync(() => Instances.WindowManager.ShowWindow(Instances.AnnouncementViewModel));
+                _ = Execute.OnUIThreadAsync(() => Instances.WindowManager.ShowWindow(Instances.AnnouncementDialogViewModel));
             }
         });
 
-        _ = Instances.VersionUpdateViewModel.ShowUpdateOrDownload();
+        _ = Instances.VersionUpdateDialogViewModel.ShowUpdateOrDownload();
     }
 
     private static async Task InitProxy()
@@ -140,12 +139,10 @@ public class RootViewModel : Conductor<Screen>.Collection.OneActive
     public (int Current, int Max)? TaskProgress
     {
         get => _taskProgress;
-        set
-        {
+        set {
             SetAndNotify(ref _taskProgress, value);
 
-            Execute.OnUIThreadAsync(() =>
-            {
+            Execute.OnUIThreadAsync(() => {
                 if (Application.Current.MainWindow == null || !Application.Current.MainWindow.IsVisible)
                 {
                     return;
@@ -198,8 +195,7 @@ public class RootViewModel : Conductor<Screen>.Collection.OneActive
     public bool IsWindowTopMost
     {
         get => _isWindowTopMost;
-        set
-        {
+        set {
             if (_isWindowTopMost == value)
             {
                 return;

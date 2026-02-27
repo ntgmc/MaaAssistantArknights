@@ -14,6 +14,14 @@ enum class CoppersTaskRunMode
     EXCHANGE // 交换已有通宝模式
 };
 
+// 插件执行结果状态
+enum class CopperTaskResult
+{
+    SUCCESS, // 成功
+    SKIPPED, // 放弃通宝
+    FAILED   // 失败
+};
+
 // RoguelikeCoppersTaskPlugin 类实现界园肉鸽通宝的自动拾取和交换逻辑
 class RoguelikeCoppersTaskPlugin : public AbstractRoguelikeTaskPlugin
 {
@@ -36,10 +44,10 @@ protected:
 
 private:
     // 处理拾取模式：分析掉落通宝并选择最优的拾取
-    bool handle_pickup_mode();
+    CopperTaskResult handle_pickup_mode();
 
     // 处理交换模式：扫描钱盒通宝并决定是否交换
-    bool handle_exchange_mode();
+    CopperTaskResult handle_exchange_mode();
 
     // 滑动通宝列表的辅助函数
     bool swipe_copper_list(int times, bool to_left) const;
@@ -62,7 +70,7 @@ private:
         int row = 0,             // 行位置
         bool is_cast = false,    // 是否已投出
         const Rect& pos = Rect() // 位置信息，用于调试
-    ) const;
+    );
 
     // 调试绘制辅助函数，在图像上绘制检测结果
     void draw_detection_debug(
@@ -71,7 +79,7 @@ private:
         const cv::Scalar& color) const;
 
     // 保存调试图像到文件
-    void save_debug_image(const cv::Mat& image, const std::string& suffix) const;
+    void save_debug_image(const cv::Mat& image, const std::string& suffix, bool auto_clean = true) const;
 
     mutable asst::CoppersTaskRunMode m_run_mode; // 当前运行模式
 

@@ -3,7 +3,7 @@ order: 8
 icon: iconoir:code-brackets
 ---
 
-# 专用 VSCode 插件教程
+# 专用 VS Code 插件教程
 
 该插件针对 MaaAssistantArknights/MaaFramework 提供了一系列方便开发的能力，包括但不限于以下功能：
 
@@ -14,7 +14,7 @@ icon: iconoir:code-brackets
 
 ## 安装
 
-推荐直接在 VSCode 的插件列表中搜索 `Maa` 来安装
+推荐直接在 VS Code 的插件列表中搜索 `Maa` 来安装
 
 ::: tip
 首次使用时, 插件会自动下载预设版本的资源
@@ -88,11 +88,11 @@ icon: iconoir:code-brackets
 
 通过控制面板, 可以扫描并选择控制器, 选择资源, 添加并管理任务, 以及执行任务.
 
-### 截图裁剪功能
+### 截图裁剪 / 快速识别
 
-在 VSCode 的命令面板中搜索执行 `Maa: 打开截图工具`, 可打开 `截图 / 裁剪` 面板.
+在 VS Code 的命令面板中搜索执行 `Maa: 打开截图工具`, 可打开 `截图 / 裁剪` 面板.
 
-> 使用 `Ctrl+Shift+P` (MacOS 上则是 `Command+Shift+P`) 呼出命令面板
+> 使用 `Ctrl+Shift+P` (macOS 上则是 `Command+Shift+P`) 呼出命令面板
 
 - 选择并连接控制器后, 可使用 `截图` 按钮直接获取截图
 - 可使用 `上传` 按钮手动上传
@@ -104,9 +104,9 @@ icon: iconoir:code-brackets
 
 ::: warning
 
-(仅 MaaFramework 项目)
+如果 OCR 的识别结果为空, 请检查[OCR模型](https://github.com/MaaXYZ/MaaFramework/blob/main/docs/zh_cn/1.1-%E5%BF%AB%E9%80%9F%E5%BC%80%E5%A7%8B.md#%E6%96%87%E5%AD%97%E8%AF%86%E5%88%AB%E6%A8%A1%E5%9E%8B%E6%96%87%E4%BB%B6)是否正确配置.
 
-如果OCR的识别结果为空，请检查[OCR模型](https://github.com/MaaXYZ/MaaFramework/blob/main/docs/zh_cn/1.1-%E5%BF%AB%E9%80%9F%E5%BC%80%E5%A7%8B.md#%E6%96%87%E5%AD%97%E8%AF%86%E5%88%AB%E6%A8%A1%E5%9E%8B%E6%96%87%E4%BB%B6)是否正确配置。
+对于 MAA, 插件将自动维护使用的模型, 只需要选择正确的资源即可.
 
 :::
 
@@ -114,11 +114,11 @@ icon: iconoir:code-brackets
 
 #### MaaFramework日志
 
-在 VSCode 的命令面板中搜索执行 `Maa: 打开maa日志`, 可查看调试期间产生的`maa.log`日志.
+在 VS Code 的命令面板中搜索执行 `Maa: 打开maa日志`, 可查看调试期间产生的`maa.log`日志.
 
 #### Maa Pipeline Support扩展日志
 
-在 VSCode 的命令面板中搜索执行 `Maa: 打开插件日志`, 可查看调试期间产生的`mse.log`日志.
+在 VS Code 的命令面板中搜索执行 `Maa: 打开插件日志`, 可查看调试期间产生的`mse.log`日志.
 
 ### 底部状态栏
 
